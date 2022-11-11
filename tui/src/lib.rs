@@ -1,84 +1,48 @@
+/// Application.
 pub mod app;
+
+/// Terminal events handler.
 pub mod event;
-pub mod person;
+
+/// Terminal user interface.
 pub mod ui;
-// mod repl;
 
-use crate::app::App;
-use crate::event::Key;
+/// Event handler.
+pub mod handler;
 
-// use repl::{get_command_type, get_config};
-use crossterm::{
-    event::{DisableMouseCapture, EnableMouseCapture},
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crate::app::{App, AppResult};
+use crate::event::{Event, EventHandler};
+use crate::handler::handle_key_events;
+use crate::ui::Tui;
 use std::io;
-use tui::{backend::CrosstermBackend, Terminal};
+use tui::backend::CrosstermBackend;
+use tui::Terminal;
 
-// use crate::repl::CommandType;
+pub fn try_main() -> AppResult<()> {
+    // Create an application.
+    let mut app = App::new();
 
-pub fn try_main() -> eyre::Result<()> {
-    log::trace!("called try_main");
-    // let config = get_config();
-    // let mut repl = rustyline::Editor::<()>::with_config(config)?;
-    // loop {
-    //     let readline = repl.readline(">> ");
-    //     match readline {
-    //         Ok(command) => {
-    //             log::trace!("Command: {:?}", command);
-    //             match get_command_type(&command) {
-    //                 CommandType::PersonCommand(_) => todo!(),
-    //             }
-    //         }
-    //         Err(ReadlineError::Interrupted) => {
-    //             break;
-    //         }
-    //         Err(ReadlineError::Eof) => {
-    //             break;
-    //         }
-    //         Err(err) => {
-    //             log::error!("An error occured: {:?}", err);
-    //             break;
-    //         }
-    //     }
-    // }
-    let app = App::new();
-    start_ui(app)?;
-    Ok(())
-}
+    // Initialize the terminal user interface.
+    let backend = CrosstermBackend::new(io::stderr());
+    let terminal = Terminal::new(backend)?;
+    let events = EventHandler::new(250);
+    let mut tui = Tui::new(terminal, events);
+    tui.init()?;
 
-fn start_ui(mut app: App) -> eyre::Result<()> {
-    log::trace!("starting ui ...");
-    let mut stdout = io::stdout();
-    crossterm::execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    enable_raw_mode()?;
-
-    let mut backend = CrosstermBackend::new(stdout);
-
-    let mut terminal = Terminal::new(backend)?;
-
-    let events = event::EventHandler::new(250);
-    loop {
-        terminal.draw(|mut f| ui::draw_main_layout(&mut f, &app));
-        match events.next()? {
-            event::Event::Input(key) => {
-                if key == Key::Ctrl('c') {
-                    break;
-                }
-            }
-            event::Event::Tick => {
-                app.update_on_tick();
-            }
+    // Start the main loop.
+    while app.running {
+        // Render the user interface.
+        tui.draw(&mut app)?;
+        // Handle events.
+        match tui.events.next()? {
+            Event::Tick => app.tick(),
+            Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
+            Event::Mouse(_) => {}
+            Event::Resize(_, _) => {}
         }
     }
-    close_application()?;
-    Ok(())
-}
 
-fn close_application() -> eyre::Result<()> {
-    disable_raw_mode()?;
-    let mut stdout = io::stdout();
-    crossterm::execute!(stdout, LeaveAlternateScreen, DisableMouseCapture)?;
-    log::trace!("closing ui ...");
+    // Exit the user interface.
+    tui.exit()?;
     Ok(())
 }
