@@ -11,12 +11,12 @@ pub fn draw_main_layout<B>(f: &mut Frame<B>, app: &App)
 where
     B: Backend,
 {
-    let margin = 5;
+    // let margin = 5;
 
     let parent_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(1), Constraint::Length(6)].as_ref())
-        .margin(margin)
+        // .margin(margin)
         .split(f.size());
 
     draw_routes(f, app, parent_layout[0]);

@@ -12,4 +12,6 @@ impl App {
         log::trace!("creating App ...");
         Self::default()
     }
+
+    pub fn update_on_tick(&mut self) {}
 }

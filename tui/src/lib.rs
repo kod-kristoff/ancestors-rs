@@ -1,9 +1,11 @@
 pub mod app;
+pub mod event;
 pub mod person;
 pub mod ui;
 // mod repl;
 
 use crate::app::App;
+use crate::event::Key;
 
 // use repl::{get_command_type, get_config};
 use crossterm::{
@@ -45,7 +47,7 @@ pub fn try_main() -> eyre::Result<()> {
     Ok(())
 }
 
-fn start_ui(app: App) -> eyre::Result<()> {
+fn start_ui(mut app: App) -> eyre::Result<()> {
     log::trace!("starting ui ...");
     let mut stdout = io::stdout();
     crossterm::execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
@@ -55,10 +57,19 @@ fn start_ui(app: App) -> eyre::Result<()> {
 
     let mut terminal = Terminal::new(backend)?;
 
-    let events = event::Event
+    let events = event::EventHandler::new(250);
     loop {
         terminal.draw(|mut f| ui::draw_main_layout(&mut f, &app));
-        break;
+        match events.next()? {
+            event::Event::Input(key) => {
+                if key == Key::Ctrl('c') {
+                    break;
+                }
+            }
+            event::Event::Tick => {
+                app.update_on_tick();
+            }
+        }
     }
     close_application()?;
     Ok(())
