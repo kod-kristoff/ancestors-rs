@@ -1,4 +1,3 @@
-use std::error;
 use tui::backend::Backend;
 use tui::layout::Alignment;
 use tui::style::{Color, Style};
@@ -6,7 +5,7 @@ use tui::terminal::Frame;
 use tui::widgets::{Block, Borders, Paragraph};
 
 /// Application result type.
-pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
+pub type AppResult<T> = eyre::Result<T>;
 
 /// Application.
 #[derive(Debug)]
