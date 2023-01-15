@@ -1,6 +1,7 @@
 [workspace]
 members = [
-"gui",
+  "ancestors-realm",
+  "gui",
   "tui",
   "libs/*",
 ]
