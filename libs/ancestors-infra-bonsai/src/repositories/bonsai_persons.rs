@@ -1,20 +1,31 @@
 use ancestors::domain::conclusion::Person;
 use bonsaidb::{
     core::schema::Collection,
-    local::{config::StorageConfiguration, Database},
+    local::{
+        config::{Builder, StorageConfiguration},
+        Database,
+    },
 };
 
 pub struct BonsaiPersonRepo {
     db: Database,
 }
 
-pub struct BonsaiRepoError {}
+#[derive(Debug)]
+pub enum BonsaiRepoError {
+    BonsaiError(bonsaidb::local::Error),
+}
+
+impl From<bonsaidb::local::Error> for BonsaiRepoError {
+    fn from(value: bonsaidb::local::Error) -> Self {
+        BonsaiRepoError::BonsaiError(value)
+    }
+}
 
 impl BonsaiPersonRepo {
     pub fn new(dbpath: &str) -> Result<Self, BonsaiRepoError> {
-        Ok(Self {
-            db: Database::open::<DbPerson>(StorageConfiguration::new(dbpath)),
-        })
+        let db = Database::open::<DbPerson>(StorageConfiguration::new(dbpath))?;
+        Ok(Self { db })
     }
 }
 
@@ -29,7 +40,8 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let repo = BonsaiPersonRepo::new();
+        let db_path = "data/tmp/unit_test_it_works.bonsaidb";
+        let repo = BonsaiPersonRepo::new(db_path);
         assert!(repo.is_ok());
     }
 }
