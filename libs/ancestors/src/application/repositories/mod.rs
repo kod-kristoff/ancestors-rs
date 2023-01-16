@@ -1,4 +1,5 @@
 mod persons;
+pub mod mem;
 
 use std::sync::Arc;
 
