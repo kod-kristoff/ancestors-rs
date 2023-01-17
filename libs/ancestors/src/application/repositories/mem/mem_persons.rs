@@ -5,12 +5,12 @@ use std::{
 
 use crate::{
     application::repositories::PersonRepository,
-    domain::{conclusion::Person, value_objects::Id},
+    domain::{common::IriRef, conclusion::Person, value_objects::Id},
 };
 use ulid::Ulid;
 
 pub struct InMemoryPersonRepo {
-    storage: Arc<RwLock<HashMap<Ulid, Person>>>,
+    storage: Arc<RwLock<HashMap<IriRef, Person>>>,
 }
 
 impl InMemoryPersonRepo {
@@ -25,7 +25,7 @@ impl InMemoryPersonRepo {
 }
 
 impl PersonRepository for InMemoryPersonRepo {
-    fn get(&self, id: &Id<Person>) -> Result<Option<Person>, ()> {
+    fn get(&self, id: &Id) -> Result<Option<Person>, ()> {
         Ok(self.storage.read().expect("").get(&id.value).cloned())
     }
     fn save(&self, person: Person) -> Result<(), ()> {

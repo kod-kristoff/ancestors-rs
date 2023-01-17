@@ -1,27 +1,24 @@
-use std::marker::PhantomData;
-
+use gedcomx_model::common::IriRef;
 use ulid::Ulid;
 
-pub struct Id<T> {
-    pub value: Ulid,
-    _marker: PhantomData<T>,
+pub struct Id {
+    pub value: IriRef,
 }
 
-impl<T> Id<T> {
-    pub fn new(value: Ulid) -> Self {
-        Self {
-            value,
-            _marker: PhantomData,
-        }
+impl Id {
+    pub fn new(value: IriRef) -> Self {
+        Self { value }
     }
 
     pub fn gen() -> Self {
-        Self::new(Ulid::new())
+        let value = IriRef::parse(format!("#{}", Ulid::new())).unwrap();
+        Self::new(value)
+        // Self::new(Ulid::new().to_string().try_into().unwrap())
     }
 }
 
-impl<T> From<Id<T>> for String {
-    fn from(value: Id<T>) -> Self {
+impl From<Id> for String {
+    fn from(value: Id) -> Self {
         value.value.to_string()
     }
 }
