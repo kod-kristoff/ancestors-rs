@@ -1,10 +1,16 @@
-use std::{sync::{Arc, RwLock}, collections::HashMap};
+use std::{
+    collections::HashMap,
+    sync::{Arc, RwLock},
+};
 
-use crate::{domain::conclusion::Person, application::repositories::PersonRepository};
+use crate::{
+    application::repositories::PersonRepository,
+    domain::{conclusion::Person, value_objects::Id},
+};
 use ulid::Ulid;
 
 pub struct InMemoryPersonRepo {
-    storage: Arc<RwLock<HashMap<Ulid, Person>>>
+    storage: Arc<RwLock<HashMap<Ulid, Person>>>,
 }
 
 impl InMemoryPersonRepo {
@@ -19,8 +25,8 @@ impl InMemoryPersonRepo {
 }
 
 impl PersonRepository for InMemoryPersonRepo {
-    fn get(&self, id: &Ulid) -> Result<Option<Person>, ()> {
-        Ok(self.storage.read().expect("").get(id).cloned())
+    fn get(&self, id: &Id<Person>) -> Result<Option<Person>, ()> {
+        Ok(self.storage.read().expect("").get(&id.value).cloned())
     }
     fn save(&self, person: Person) -> Result<(), ()> {
         todo!("implement save")

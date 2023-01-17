@@ -1,10 +1,10 @@
-use crate::application::repositories::DynPersonRepository;
+use gedcomx_model::conclusion::Person;
 
+use crate::{application::repositories::DynPersonRepository, domain::value_objects::Id};
 
 pub struct AddingPerson {
     repo: DynPersonRepository,
 }
-
 
 impl AddingPerson {
     pub fn new(repo: DynPersonRepository) -> Self {
@@ -12,6 +12,13 @@ impl AddingPerson {
     }
 }
 
+impl AddingPerson {
+    pub fn execute(&self) -> Result<(), ()> {
+        let id = Id::gen();
+        let person = Person::with_id(id);
+        Ok(())
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
