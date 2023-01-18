@@ -1,17 +1,14 @@
-use std::marker::PhantomData;
 
 use ulid::Ulid;
 
-pub struct Id<T> {
+pub struct Id {
     pub value: Ulid,
-    _marker: PhantomData<T>,
 }
 
-impl<T> Id<T> {
+impl Id {
     pub fn new(value: Ulid) -> Self {
         Self {
             value,
-            _marker: PhantomData,
         }
     }
 
@@ -20,8 +17,8 @@ impl<T> Id<T> {
     }
 }
 
-impl<T> From<Id<T>> for String {
-    fn from(value: Id<T>) -> Self {
+impl From<Id> for String {
+    fn from(value: Id) -> Self {
         value.value.to_string()
     }
 }

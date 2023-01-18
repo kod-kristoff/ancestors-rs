@@ -13,10 +13,22 @@ impl AddingPerson {
 }
 
 impl AddingPerson {
-    pub fn execute(&self) -> Result<(), ()> {
+    pub fn execute(&self) -> Result<(), UseCaseError> {
         let id = Id::gen();
-        let person = Person::with_id(id);
+        let person = Person::with_id(id)?;
+        self.repo.save(person).unwrap();
         Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum UseCaseError {
+    GedcomxError(gedcomx_model::Error),
+}
+
+impl From<gedcomx_model::Error> for UseCaseError {
+    fn from(value: gedcomx_model::Error) -> Self {
+        Self::GedcomxError(value)
     }
 }
 #[cfg(test)]
@@ -28,5 +40,7 @@ mod tests {
     fn adding_person_succeds() {
         let repo = InMemoryPersonRepo::arc_new();
         let uc = AddingPerson::new(repo);
+
+        uc.execute().unwrap();
     }
 }
