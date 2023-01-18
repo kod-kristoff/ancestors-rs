@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }
+hashbrown = "0.13.2"
 ulid = "1.0.0"

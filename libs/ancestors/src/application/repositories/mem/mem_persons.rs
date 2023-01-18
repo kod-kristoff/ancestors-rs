@@ -1,8 +1,7 @@
 use std::{
-    collections::HashMap,
     sync::{Arc, RwLock},
 };
-
+use hashbrown::HashMap;
 use crate::{
     application::repositories::PersonRepository,
     domain::{common::IriRef, conclusion::Person, value_objects::Id},
@@ -29,7 +28,8 @@ impl PersonRepository for InMemoryPersonRepo {
         Ok(self.storage.read().expect("").get(&id.value).cloned())
     }
     fn save(&self, person: Person) -> Result<(), ()> {
-        todo!("implement save")
-        // self.storage.write().unwrap().insert(k, v)
+        // todo!("implement save")
+        self.storage.write().unwrap().insert(person.id(), person);
+        Ok(())
     }
 }
