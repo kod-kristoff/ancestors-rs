@@ -1,11 +1,9 @@
-use std::{
-    sync::{Arc, RwLock},
-};
-use hashbrown::HashMap;
 use crate::{
     application::repositories::PersonRepository,
     domain::{common::IriRef, conclusion::Person, value_objects::Id},
 };
+use hashbrown::HashMap;
+use std::sync::{Arc, RwLock};
 use ulid::Ulid;
 
 pub struct InMemoryPersonRepo {
@@ -29,7 +27,10 @@ impl PersonRepository for InMemoryPersonRepo {
     }
     fn save(&self, person: Person) -> Result<(), ()> {
         // todo!("implement save")
-        self.storage.write().unwrap().insert(person.id(), person);
+        self.storage
+            .write()
+            .unwrap()
+            .insert(person.id().clone(), person.clone());
         Ok(())
     }
 }

@@ -3,5 +3,6 @@ members = [
   "ancestors-realm",
   "gui",
   "tui",
+  "repl",
   "libs/*",
 ]
