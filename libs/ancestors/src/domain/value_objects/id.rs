@@ -1,6 +1,7 @@
 use gedcomx_model::common::IriRef;
 use ulid::Ulid;
 
+#[derive(Debug, Clone)]
 pub struct Id {
     pub value: IriRef,
 }
