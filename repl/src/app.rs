@@ -13,6 +13,7 @@ pub struct AppContext {
 #[derive(Clone)]
 pub enum AppState {
     MainView,
+    EditPerson(String),
 }
 
 impl Default for AppState {

@@ -52,6 +52,7 @@ fn main() -> eyre::Result<()> {
     loop {
         let p = match ctx.state {
             AppState::MainView => format!(">> "),
+            AppState::EditPerson(ref id) => format!("edit person '{}'\n>> ", id),
         };
         // repl.helper_mut().expect("No helper found").colored_prompt =
         //     format!("\x1b[1;32m{}\x1b[0m", p);
@@ -170,6 +171,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 }
                             };
                             println!("edit person {:?}", id);
+                            ctx.state = AppState::EditPerson(id);
                         }
                         _ => todo!("handle other"),
                     }
@@ -177,6 +179,9 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                 Some((name, _matches)) => unimplemented!("{}", name),
                 None => unreachable!("subcommand required"),
             }
+        }
+        AppState::EditPerson(ref id) => {
+            todo!("edit person")
         }
     }
 
