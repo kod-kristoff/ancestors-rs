@@ -135,6 +135,31 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                     let uc = AddingPerson::new(repo);
                     uc.execute(&cmd).unwrap();
                 }
+                Some(("edit", edit_matches)) => {
+                    let id: Option<&String> = edit_matches.get_one("id");
+                    let id: String = match id {
+                        Some(id) => id.clone(),
+                        None => {
+                            for (i, person) in ctx.db().read().unwrap().persons().iter().enumerate()
+                            {
+                                let name: &str = if person.names().is_empty() {
+                                    ""
+                                } else {
+                                    if person.names()[0].name_forms().is_empty() {
+                                        ""
+                                    } else {
+                                        person.names()[0].name_forms()[0].get_full_text()
+                                    }
+                                };
+                                println!("{}: {}", i, name);
+                            }
+                            let mut choice = None;
+                            loop {}
+                            "name".into()
+                        }
+                    };
+                    println!("edit person {:?}", id);
+                }
                 _ => todo!("handle other"),
             }
         }
@@ -205,4 +230,5 @@ fn person_commands() -> Command {
         .subcommand_required(true)
         .subcommand(Command::new("add").arg(Arg::new("name").required(true)))
         .subcommand(Command::new("list"))
+        .subcommand(Command::new("edit").arg(Arg::new("id")))
 }
