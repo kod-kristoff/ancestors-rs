@@ -1,13 +1,19 @@
+mod app;
+
 use ancestors::application::use_cases::{AddPerson, AddingPerson};
 use ancestors::infrastructure::MemGedcomxPersonRepo;
 use clap::{crate_name, crate_version, value_parser, Arg, Command};
-use repl::AppContext;
+use env_logger::Env;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 use std::path::PathBuf;
 
+use crate::app::{AppContext, AppState};
+
 fn main() -> eyre::Result<()> {
-    env_logger::init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("warn,repl=trace"))
+        .format_timestamp(None)
+        .init();
 
     // Starting Rustyline with a default configuration
     // let config = get_config();
@@ -44,7 +50,9 @@ fn main() -> eyre::Result<()> {
     let mut ctx = AppContext::default();
 
     loop {
-        let p = format!(">> ");
+        let p = match ctx.state {
+            AppState::MainView => format!(">> "),
+        };
         // repl.helper_mut().expect("No helper found").colored_prompt =
         //     format!("\x1b[1;32m{}\x1b[0m", p);
         // Source for ANSI Color information: http://www.perpetualpc.net/6429_colors.html#color_list
@@ -103,68 +111,73 @@ fn main() -> eyre::Result<()> {
 
 fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
     let args = shlex::split(line).unwrap();
-    println!("args = {args:?}");
-    let matches = cli().try_get_matches_from(args)?;
+    log::debug!("args = {args:?}");
+    match ctx.state {
+        AppState::MainView => {
+            let matches = cli().try_get_matches_from(args)?;
 
-    match matches.subcommand() {
-        Some(("exit", _matches)) => return Ok(true),
-        Some(("load", matches)) => {
-            let path = matches.get_one::<PathBuf>("file").expect("required");
-            ctx.load(path)?;
-        }
-        Some(("save-as", matches)) => {
-            let path = matches.get_one::<PathBuf>("file").expect("required");
-            ctx.save_as(path)?;
-        }
-        Some(("person", submatches)) => {
-            println!("person");
-            match submatches.subcommand() {
-                Some(("list", _matches)) => {
-                    println!("list persons");
-                    println!("persons = {:#?}", ctx.db().read().unwrap().persons());
+            match matches.subcommand() {
+                Some(("exit", _matches)) => return Ok(true),
+                Some(("load", matches)) => {
+                    let path = matches.get_one::<PathBuf>("file").expect("required");
+                    ctx.load(path)?;
                 }
-                Some(("add", add_matches)) => {
-                    let name: &String = add_matches.get_one("name").unwrap();
-                    // let person = Person::new("id").name(name);
-                    // println!("{person:?}");
-                    let cmd = AddPerson {
-                        name: Some(name.clone()),
-                        ..Default::default()
-                    };
-                    let repo = MemGedcomxPersonRepo::arc_new(ctx.db().clone());
-                    let uc = AddingPerson::new(repo);
-                    uc.execute(&cmd).unwrap();
+                Some(("save-as", matches)) => {
+                    let path = matches.get_one::<PathBuf>("file").expect("required");
+                    ctx.save_as(path)?;
                 }
-                Some(("edit", edit_matches)) => {
-                    let id: Option<&String> = edit_matches.get_one("id");
-                    let id: String = match id {
-                        Some(id) => id.clone(),
-                        None => {
-                            for (i, person) in ctx.db().read().unwrap().persons().iter().enumerate()
-                            {
-                                let name: &str = if person.names().is_empty() {
-                                    ""
-                                } else {
-                                    if person.names()[0].name_forms().is_empty() {
-                                        ""
-                                    } else {
-                                        person.names()[0].name_forms()[0].get_full_text()
-                                    }
-                                };
-                                println!("{}: {}", i, name);
-                            }
-                            let mut choice = None;
-                            loop {}
-                            "name".into()
+                Some(("person", submatches)) => {
+                    println!("person");
+                    match submatches.subcommand() {
+                        Some(("list", _matches)) => {
+                            println!("list persons");
+                            println!("persons = {:#?}", ctx.db().read().unwrap().persons());
                         }
-                    };
-                    println!("edit person {:?}", id);
+                        Some(("add", add_matches)) => {
+                            let name: &String = add_matches.get_one("name").unwrap();
+                            // let person = Person::new("id").name(name);
+                            // println!("{person:?}");
+                            let cmd = AddPerson {
+                                name: Some(name.clone()),
+                                ..Default::default()
+                            };
+                            let repo = MemGedcomxPersonRepo::arc_new(ctx.db().clone());
+                            let uc = AddingPerson::new(repo);
+                            uc.execute(&cmd).unwrap();
+                        }
+                        Some(("edit", edit_matches)) => {
+                            let id: Option<&String> = edit_matches.get_one("id");
+                            let id: String = match id {
+                                Some(id) => id.clone(),
+                                None => {
+                                    for (i, person) in
+                                        ctx.db().read().unwrap().persons().iter().enumerate()
+                                    {
+                                        let name: &str = if person.names().is_empty() {
+                                            ""
+                                        } else {
+                                            if person.names()[0].name_forms().is_empty() {
+                                                ""
+                                            } else {
+                                                person.names()[0].name_forms()[0].get_full_text()
+                                            }
+                                        };
+                                        println!("{}: {}", i, name);
+                                    }
+                                    // let mut choice = None;
+                                    // loop {}
+                                    "name".into()
+                                }
+                            };
+                            println!("edit person {:?}", id);
+                        }
+                        _ => todo!("handle other"),
+                    }
                 }
-                _ => todo!("handle other"),
+                Some((name, _matches)) => unimplemented!("{}", name),
+                None => unreachable!("subcommand required"),
             }
         }
-        Some((name, _matches)) => unimplemented!("{}", name),
-        None => unreachable!("subcommand required"),
     }
 
     Ok(false)

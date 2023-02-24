@@ -7,6 +7,18 @@ use std::{fs, io};
 pub struct AppContext {
     db: SharedGedcomX,
     db_path: Option<PathBuf>,
+    pub state: AppState,
+}
+
+#[derive(Clone)]
+pub enum AppState {
+    MainView,
+}
+
+impl Default for AppState {
+    fn default() -> Self {
+        Self::MainView
+    }
 }
 
 impl Default for AppContext {
@@ -14,6 +26,7 @@ impl Default for AppContext {
         Self {
             db: Arc::new(RwLock::new(GedcomX::new())),
             db_path: None,
+            state: AppState::default(),
         }
     }
 }
