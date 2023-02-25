@@ -1,5 +1,6 @@
-mod persons;
 pub mod mem;
+mod persons;
+mod repository;
 
 use std::sync::Arc;
 
