@@ -1,6 +1,8 @@
 pub mod application;
 pub mod domain;
 pub mod infrastructure;
+pub mod value_objects;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }

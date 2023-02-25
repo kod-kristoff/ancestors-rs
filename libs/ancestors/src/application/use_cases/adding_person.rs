@@ -1,6 +1,6 @@
 use gedcomx_model::conclusion::Person;
 
-use crate::{application::repositories::DynPersonRepository, domain::value_objects::Id};
+use crate::{application::repositories::DynPersonRepository, value_objects::Id};
 
 #[derive(Debug, Clone)]
 pub struct AddPerson {

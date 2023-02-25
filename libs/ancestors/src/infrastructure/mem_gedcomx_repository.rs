@@ -19,7 +19,10 @@ impl MemGedcomxPersonRepo {
 }
 
 impl PersonRepository for MemGedcomxPersonRepo {
-    fn get(&self, id: &crate::domain::Id) -> Result<Option<gedcomx_model::conclusion::Person>, ()> {
+    fn get(
+        &self,
+        id: &crate::value_objects::Id,
+    ) -> Result<Option<gedcomx_model::conclusion::Person>, ()> {
         Ok(self
             .storage
             .read()

@@ -1,10 +1,10 @@
 use crate::{
     application::repositories::PersonRepository,
-    domain::{common::IriRef, conclusion::Person, value_objects::Id},
+    domain::{common::IriRef, conclusion::Person},
+    value_objects::Id,
 };
 use hashbrown::HashMap;
 use std::sync::{Arc, RwLock};
-use ulid::Ulid;
 
 pub struct InMemoryPersonRepo {
     storage: Arc<RwLock<HashMap<IriRef, Person>>>,
