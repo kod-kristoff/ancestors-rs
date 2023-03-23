@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "ancestors-realm",
+  "ancemad-ui",
   "gui",
   "tui",
   "repl",
