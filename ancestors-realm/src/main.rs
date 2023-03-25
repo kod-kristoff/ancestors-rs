@@ -1,5 +1,6 @@
 mod app;
 mod telemetry;
+mod ui;
 
 use anyhow::Context;
 use log::LevelFilter;
@@ -16,6 +17,7 @@ fn main() {
         std::process::exit(1);
     }
 }
+
 fn try_main() -> anyhow::Result<()> {
     let log_level = LevelFilter::Trace;
 

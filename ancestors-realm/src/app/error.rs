@@ -8,8 +8,7 @@ pub enum Error {
     // Audio(AudioError),
     // #[error("game save error: {0}")]
     // SaveGame(SavedGameError),
-    // #[error("ui error: {0}")]
-    // Ui(UiError),
+    Ui(UiError),
     Unknown(String),
 }
 
@@ -28,5 +27,11 @@ impl StdError for Error {
             Self::Ui(err) => Some(err),
             Self::Unknown(_) => None,
         }
+    }
+}
+
+impl From<UiError> for Error {
+    fn from(value: UiError) -> Self {
+        Self::Ui(value)
     }
 }
