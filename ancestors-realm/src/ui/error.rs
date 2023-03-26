@@ -8,12 +8,9 @@ use tuirealm::{terminal::TerminalError, ApplicationError};
 /// Ui error
 #[derive(Debug)]
 pub enum UiError {
-    // #[error("failed to get terminal size")]
-    // FailedToGetSize,
-    // #[error("application error: {0}")]
-    // Application(ApplicationError),
-    // #[error("io error: {0}")]
-    // Io(std::io::Error),
+    FailedToGetSize,
+    Application(ApplicationError),
+    Io(std::io::Error),
     Terminal(TerminalError),
     Unknown(String),
 }
@@ -21,8 +18,11 @@ pub enum UiError {
 impl Display for UiError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::Application(_) => write!(f, "application error"),
+            Self::Io(_) => write!(f, "io error"),
             Self::Terminal(_) => write!(f, "terminal error"),
             Self::Unknown(msg) => write!(f, "unknown: {}", msg),
+            Self::FailedToGetSize => write!(f, "failed to get terminal size"),
         }
     }
 }
@@ -30,6 +30,9 @@ impl Display for UiError {
 impl StdError for UiError {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match self {
+            Self::Application(err) => Some(err),
+            Self::FailedToGetSize => None,
+            Self::Io(err) => Some(err),
             Self::Terminal(err) => Some(err),
             Self::Unknown(_) => None,
         }
@@ -39,5 +42,17 @@ impl StdError for UiError {
 impl From<TerminalError> for UiError {
     fn from(value: TerminalError) -> Self {
         Self::Terminal(value)
+    }
+}
+
+impl From<ApplicationError> for UiError {
+    fn from(value: ApplicationError) -> Self {
+        Self::Application(value)
+    }
+}
+
+impl From<std::io::Error> for UiError {
+    fn from(value: std::io::Error) -> Self {
+        Self::Io(value)
     }
 }
