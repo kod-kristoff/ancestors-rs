@@ -1,9 +1,13 @@
+use std::path::PathBuf;
+
 use crate::app::AppResult;
-use crate::ui::{Id, MenuId, MenuMsg, Msg, Ui};
+use crate::serialization::sessions::SavedSessions;
+use crate::ui::{Id, LoadDbId, LoadDbMsg, MenuId, MenuMsg, Msg, Ui};
 
 /// App runtime
 pub struct Runtime {
     ui: Ui,
+    saved_sessions_dir: PathBuf,
     running: bool,
 }
 
@@ -17,7 +21,11 @@ impl Runtime {
         log::debug!("loading menu");
         ui.load_menu()?;
         log::info!("menu loaded");
-        Ok(Self { ui, running: true })
+        Ok(Self {
+            ui,
+            saved_sessions_dir: "sessions".into(),
+            running: true,
+        })
     }
 
     /// Run app
@@ -47,8 +55,35 @@ impl Runtime {
     fn update(&mut self, msg: Msg) -> AppResult<()> {
         match msg {
             Msg::None => Ok(()),
+            Msg::LoadDb(msg) => self.update_load_db(msg),
             Msg::Menu(msg) => self.update_menu(msg),
         }
+    }
+
+    fn update_load_db(&mut self, msg: LoadDbMsg) -> AppResult<()> {
+        match msg {
+            LoadDbMsg::CloseErrorPopup => {
+                // self.ui.close_load_game_error()?;
+            }
+            LoadDbMsg::GoToMenu => {
+                self.ui.load_menu()?;
+            }
+            LoadDbMsg::DbChanged(p) => todo!("db changed"),
+            // match SavedDbFiles::load_game(&p) {
+            //     Err(e) => {
+            //         log::error!("failed to load game: {}", e);
+            //         // self.ui
+            //         //     .show_load_game_error(format!("failed to load game: {}", e))?;
+            //     }
+            //     Ok(session) => {
+            //         // self.ui.set_load_game_save_metadata(&session)?;
+            //     }
+            // },
+            LoadDbMsg::LoadDb(game_file) => {
+                // self.load_game(&game_file)?;
+            }
+        }
+        Ok(())
     }
 
     fn update_menu(&mut self, msg: MenuMsg) -> AppResult<()> {
@@ -66,18 +101,19 @@ impl Runtime {
                 self.ui.active(Id::Menu(MenuId::Seed));
             }
             MenuMsg::LoadDb => {
-                todo!("load db")
-                // let saved_games = SavedDbFiles::saved_games(&self.saved_games_dir)?;
-                // if saved_games.is_empty() {
-                //     self.play_sound(Sound::Error);
-                //     self.play_sound(Sound::Input);
-                // } else {
-                //     let game_0 = match saved_games.get(0) {
-                //         None => None,
-                //         Some(p) => SavedDbFiles::load_game(p).ok(),
-                //     };
-                //     self.ui.load_game_loader(&saved_games, game_0.as_ref())?;
-                // }
+                let saved_sessions = SavedSessions::saved_sessions(&self.saved_sessions_dir)?;
+                if saved_sessions.is_empty() {
+                    log::error!("No saved sessions");
+                    // self.play_sound(Sound::Error);
+                    // self.play_sound(Sound::Input);
+                } else {
+                    let session_0 = match saved_sessions.get(0) {
+                        None => None,
+                        Some(p) => SavedSessions::load_session(p).ok(),
+                    };
+                    self.ui
+                        .load_db_loader(&saved_sessions, session_0.as_ref())?;
+                }
             }
             MenuMsg::NewDb => {
                 // create a new session

@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::time::Duration;
 use tuirealm::tui::layout::{Constraint, Direction, Layout};
 use tuirealm::tui::widgets::Clear;
@@ -8,27 +9,37 @@ use tuirealm::{
 mod components;
 mod error;
 
-use components::menu;
-pub use components::menu::{MenuId, MenuMsg};
-pub use error::UiError;
+use crate::app::Session;
+
+use self::components::load_db;
+pub use self::components::{
+    load_db::{LoadDbId, LoadDbMsg},
+    menu::{MenuId, MenuMsg},
+};
+pub use self::error::UiError;
+
+use self::components::{common::draw_area_in, menu};
 
 pub type UiResult<T> = Result<T, UiError>;
 
 /// Application ID
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum Id {
+    LoadDb(LoadDbId),
     Menu(MenuId),
 }
 
 /// Application MSG
 #[derive(PartialEq, Eq)]
 pub enum Msg {
+    LoadDb(LoadDbMsg),
     Menu(MenuMsg),
     None,
 }
 /// Current UI view
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum View {
+    LoadDb,
     Menu,
     None,
 }
@@ -82,6 +93,30 @@ impl Ui {
             .map(|rect| (rect.width, rect.height))
     }
     // -- @! view loaders
+    /// load session loader
+    pub fn load_db_loader(
+        &mut self,
+        sessions: &[PathBuf],
+        session0: Option<&Session>,
+    ) -> UiResult<()> {
+        self.application.umount_all();
+        self.application.mount(
+            Id::LoadDb(LoadDbId::Dbs),
+            Box::new(load_db::DbFiles::new(sessions)),
+            vec![],
+        )?;
+        if let Some(session) = session0 {
+            self.application.mount(
+                Id::LoadDb(LoadDbId::Metadata),
+                Box::new(load_db::Metadata::new(session)),
+                vec![],
+            )?;
+        }
+        self.application.active(&Id::LoadDb(LoadDbId::Dbs))?;
+        self.view = View::LoadDb;
+        Ok(())
+    }
+
     /// Load menu view
     pub fn load_menu(&mut self) -> UiResult<()> {
         self.application.umount_all();
@@ -133,13 +168,49 @@ impl Ui {
     /// Display ui to terminal
     pub fn draw(&mut self) -> UiResult<()> {
         match self.view {
-            // View::Game => self.view_game(),
-            // View::GameOver => self.view_game_over(),
-            // View::LoadGame => self.view_load_game(),
+            // View::Db => self.view_session(),
+            // View::DbOver => self.view_session_over(),
+            View::LoadDb => self.draw_load_db(),
             View::Menu => self.draw_menu(),
             // View::Victory => self.view_victory(),
             View::None => Ok(()),
         }
+    }
+
+    fn draw_load_db(&mut self) -> UiResult<()> {
+        self.terminal.raw_mut().draw(|f| {
+            // Prepare chunks
+            let body = Layout::default()
+                .direction(Direction::Horizontal)
+                .horizontal_margin(10)
+                .constraints(
+                    [
+                        Constraint::Percentage(60), // List
+                        Constraint::Percentage(40), // metadata
+                    ]
+                    .as_ref(),
+                )
+                .split(f.size());
+            let metadata_chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([
+                    Constraint::Length(10), // metadata
+                ])
+                .split(body[1]);
+            self.application
+                .view(&Id::LoadDb(LoadDbId::Dbs), f, body[0]);
+            self.application
+                .view(&Id::LoadDb(LoadDbId::Metadata), f, metadata_chunks[0]);
+            // popups
+            if self.application.mounted(&Id::LoadDb(LoadDbId::ErrorPopup)) {
+                let popup = draw_area_in(f.size(), 50, 20);
+                f.render_widget(Clear, popup);
+                // make popup
+                self.application
+                    .view(&Id::LoadDb(LoadDbId::ErrorPopup), f, popup);
+            }
+        })?;
+        Ok(())
     }
 
     fn draw_menu(&mut self) -> UiResult<()> {
@@ -151,8 +222,8 @@ impl Ui {
                 .constraints(
                     [
                         Constraint::Length(7), // Title
-                        Constraint::Length(3), // new game + seed
-                        Constraint::Length(3), // load game
+                        Constraint::Length(3), // new session + seed
+                        Constraint::Length(3), // load session
                         Constraint::Length(3), // quit
                         Constraint::Length(1), // footer
                     ]

@@ -1,4 +1,5 @@
 mod app;
+mod serialization;
 mod telemetry;
 mod ui;
 
