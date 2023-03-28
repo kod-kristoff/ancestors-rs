@@ -7,6 +7,7 @@ use std::fs::OpenOptions;
 use std::path::{Path, PathBuf};
 use std::{error::Error, fmt::Display};
 
+use crate::app::session::SessionMetadata;
 use crate::app::Session;
 
 pub type SavedSessionResult<T> = Result<T, SavedSessionError>;
@@ -67,7 +68,7 @@ impl SavedSessions {
             .write(true)
             .open(&path)?;
         log::debug!("serializing JSON to file");
-        serde_json::to_writer(&file, session)?;
+        serde_json::to_writer(&file, session.metadata())?;
         log::info!("session saved");
         Ok(())
     }
@@ -77,9 +78,9 @@ impl SavedSessions {
         log::debug!("loading session at {}", path.display());
         let file = OpenOptions::new().read(true).open(path)?;
         log::debug!("session file opened");
-        let session = serde_json::from_reader(file)?;
+        let session_metadata: SessionMetadata = serde_json::from_reader(file)?;
         log::info!("session loaded");
-        Ok(session)
+        Ok(session_metadata.into())
     }
 
     /// Returns the list of available saved sessions
@@ -100,7 +101,6 @@ mod test {
 
     use super::*;
 
-    use pretty_assertions::assert_eq;
     use tempfile::TempDir;
 
     #[test]

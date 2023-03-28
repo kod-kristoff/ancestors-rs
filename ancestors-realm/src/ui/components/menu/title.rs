@@ -15,7 +15,7 @@ pub struct Title {
 impl Title {
     pub fn new(area_width: u16) -> Self {
         log::debug!("creating Title with width = {}", area_width);
-        let margin_left = " ".repeat((area_width as usize / 2));
+        let margin_left = " ".repeat(area_width as usize / 2);
         log::debug!("using margin_left='{}'", margin_left);
         Self {
             component: Paragraph::default()

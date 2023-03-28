@@ -11,14 +11,14 @@ mod error;
 
 use crate::app::Session;
 
-use self::components::load_db;
 pub use self::components::{
     load_db::{LoadDbId, LoadDbMsg},
     menu::{MenuId, MenuMsg},
+    persons::{SessionId, SessionMsg},
 };
 pub use self::error::UiError;
 
-use self::components::{common::draw_area_in, menu};
+use self::components::{common::draw_area_in, load_db, menu, persons};
 
 pub type UiResult<T> = Result<T, UiError>;
 
@@ -26,6 +26,7 @@ pub type UiResult<T> = Result<T, UiError>;
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub enum Id {
     LoadDb(LoadDbId),
+    Session(SessionId),
     Menu(MenuId),
 }
 
@@ -34,6 +35,7 @@ pub enum Id {
 pub enum Msg {
     LoadDb(LoadDbMsg),
     Menu(MenuMsg),
+    Session(SessionMsg),
     None,
 }
 /// Current UI view
@@ -41,6 +43,7 @@ pub enum Msg {
 enum View {
     LoadDb,
     Menu,
+    Session,
     None,
 }
 
@@ -158,6 +161,34 @@ impl Ui {
         Ok(())
     }
 
+    pub fn load_session(&mut self, session: &Session) -> UiResult<()> {
+        self.application.umount_all();
+        self.application.mount(
+            Id::Session(SessionId::AvailableActions),
+            Box::new(persons::AvailableActions::new(session)),
+            vec![],
+        )?;
+        self.application.mount(
+            Id::Session(SessionId::PersonList),
+            Box::new(persons::PersonList::new(&[], session)),
+            vec![],
+        )?;
+        self.application.mount(
+            Id::Session(SessionId::Messages),
+            Box::new(persons::Messages::new(&[], session)),
+            vec![],
+        )?;
+        // self.application.mount(
+        //     Id::Session(SessionId::PlayerHp),
+        //     Box::new(persons::PlayerHp::new(session.player().health())),
+        //     vec![],
+        // )?;
+        self.application
+            .active(&Id::Session(SessionId::AvailableActions))?;
+        self.view = View::Session;
+        Ok(())
+    }
+
     /// Active focus
     pub fn active(&mut self, id: Id) {
         let _ = self.application.active(&id);
@@ -168,6 +199,7 @@ impl Ui {
     /// Display ui to terminal
     pub fn draw(&mut self) -> UiResult<()> {
         match self.view {
+            View::Session => self.draw_session(),
             // View::Db => self.view_session(),
             // View::DbOver => self.view_session_over(),
             View::LoadDb => self.draw_load_db(),
@@ -175,6 +207,49 @@ impl Ui {
             // View::Victory => self.view_victory(),
             View::None => Ok(()),
         }
+    }
+
+    fn draw_session(&mut self) -> UiResult<()> {
+        self.terminal.raw_mut().draw(|f| {
+            // Prepare chunks
+            let body = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints(
+                    [
+                        Constraint::Length(1), // Enemy data
+                        Constraint::Min(20),   // Canvas
+                        Constraint::Length(6), // player's stats
+                    ]
+                    .as_ref(),
+                )
+                .split(f.size());
+            // canvas
+            self.application
+                .view(&Id::Session(SessionId::PersonList), f, body[1]);
+            // player's states
+            let player_states = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints(
+                    [
+                        Constraint::Length(40),
+                        Constraint::Min(30),
+                        Constraint::Length(40),
+                    ]
+                    .as_ref(),
+                )
+                .split(body[2]);
+            self.application.view(
+                &Id::Session(SessionId::AvailableActions),
+                f,
+                player_states[0],
+            );
+            self.application
+                .view(&Id::Session(SessionId::Messages), f, player_states[1]);
+            // self.application
+            //     .view(&Id::Game(GameId::PlayerHp), f, player_states[2]);
+            // popups
+        })?;
+        Ok(())
     }
 
     fn draw_load_db(&mut self) -> UiResult<()> {
@@ -244,4 +319,32 @@ impl Ui {
         })?;
         Ok(())
     }
+
+    pub fn show_add_person_popup(&mut self) -> UiResult<()> {
+        self.application.remount(
+            Id::Session(SessionId::AddPersonPopup),
+            Box::new(persons::AddPersonPopup::new()),
+            vec![],
+        )?;
+        self.application
+            .active(&Id::Session(SessionId::AddPersonPopup))?;
+        Ok(())
+    }
+}
+
+impl Drop for Ui {
+    fn drop(&mut self) {
+        self.finalize_terminal();
+    }
+}
+
+pub fn reset_terminal() -> UiResult<()> {
+    use crossterm::{
+        event::DisableMouseCapture,
+        terminal::{disable_raw_mode, LeaveAlternateScreen},
+    };
+    use std::io;
+    disable_raw_mode()?;
+    crossterm::execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture,);
+    Ok(())
 }

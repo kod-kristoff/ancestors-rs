@@ -1,14 +1,15 @@
 use std::path::PathBuf;
 
-use crate::app::AppResult;
+use crate::app::{AppResult, Session};
 use crate::serialization::sessions::SavedSessions;
-use crate::ui::{Id, LoadDbId, LoadDbMsg, MenuId, MenuMsg, Msg, Ui};
+use crate::ui::{Id, LoadDbId, LoadDbMsg, MenuId, MenuMsg, Msg, SessionMsg, Ui};
 
 /// App runtime
 pub struct Runtime {
     ui: Ui,
     saved_sessions_dir: PathBuf,
     running: bool,
+    session: Option<Session>,
 }
 
 impl Runtime {
@@ -25,6 +26,7 @@ impl Runtime {
             ui,
             saved_sessions_dir: "sessions".into(),
             running: true,
+            session: None,
         })
     }
 
@@ -57,6 +59,7 @@ impl Runtime {
             Msg::None => Ok(()),
             Msg::LoadDb(msg) => self.update_load_db(msg),
             Msg::Menu(msg) => self.update_menu(msg),
+            Msg::Session(msg) => self.update_session(msg),
         }
     }
 
@@ -118,14 +121,40 @@ impl Runtime {
             MenuMsg::NewDb => {
                 // create a new session
                 // let seed = self.ui.get_menu_seed()?;
-                let seed = 0;
-                log::debug!("initializing new session with seed {:?}", seed);
-                // self.start_maze(Session::new(seed))?;
+                // let seed = 0;
+                log::debug!("initializing new session");
+                self.start_session(Session::default())?;
             }
             MenuMsg::Quit => {
                 self.running = false;
             }
         }
+        Ok(())
+    }
+
+    fn update_session(&mut self, msg: SessionMsg) -> AppResult<()> {
+        match msg {
+            SessionMsg::ActionSelected(action) => match action {
+                Action::AddPerson => self.ui.show_add_person_popup()?,
+                _ => todo!(),
+            },
+            SessionMsg::CloseErrorPopup => todo!(),
+            SessionMsg::CloseInventory => todo!(),
+            SessionMsg::CloseQuitPopup => todo!(),
+            SessionMsg::CloseSaveFileName => todo!(),
+            SessionMsg::SessionOver => todo!(),
+            SessionMsg::SaveSession(string) => todo!(),
+            SessionMsg::ShowInventory => todo!(),
+            SessionMsg::ShowSaveFileName => todo!(),
+            SessionMsg::ShowQuitPopup => todo!(),
+            SessionMsg::Quit(should_save) => {}
+        }
+        Ok(())
+    }
+
+    fn start_session(&mut self, session: Session) -> AppResult<()> {
+        self.ui.load_session(&session)?;
+        self.session = Some(session);
         Ok(())
     }
 }
