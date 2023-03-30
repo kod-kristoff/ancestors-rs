@@ -1,3 +1,5 @@
+use ancestors::application::use_cases::UseCaseError;
+
 use crate::serialization::sessions::SavedSessionError;
 use crate::ui::UiError;
 use std::{error::Error as StdError, fmt::Display};
@@ -9,7 +11,7 @@ pub enum Error {
     // Audio(AudioError),
     SaveSession(SavedSessionError),
     Ui(UiError),
-    Unknown(String),
+    UseCaseError(UseCaseError),
 }
 
 impl Display for Error {
@@ -17,7 +19,7 @@ impl Display for Error {
         match self {
             Self::SaveSession(err) => write!(f, "session save error: {0}", err),
             Self::Ui(_) => write!(f, "ui error"),
-            Self::Unknown(msg) => write!(f, "unknown: {}", msg),
+            Self::UseCaseError(err) => write!(f, "use case error: {}", err),
         }
     }
 }
@@ -27,7 +29,7 @@ impl StdError for Error {
         match self {
             Self::SaveSession(err) => Some(err),
             Self::Ui(err) => Some(err),
-            Self::Unknown(_) => None,
+            Self::UseCaseError(err) => Some(err),
         }
     }
 }
@@ -40,5 +42,11 @@ impl From<SavedSessionError> for Error {
 impl From<UiError> for Error {
     fn from(value: UiError) -> Self {
         Self::Ui(value)
+    }
+}
+
+impl From<UseCaseError> for Error {
+    fn from(value: UseCaseError) -> Self {
+        Self::UseCaseError(value)
     }
 }

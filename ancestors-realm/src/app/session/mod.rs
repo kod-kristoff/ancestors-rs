@@ -3,6 +3,8 @@
 //! A Db session
 use std::sync::{Arc, RwLock};
 
+use ancestors::application::repositories::DynPersonRepository;
+use ancestors::infrastructure::MemGedcomxPersonRepo;
 use ancestors::{domain::GedcomX, infrastructure::SharedGedcomX};
 
 mod action;
@@ -53,6 +55,10 @@ impl Session {
         let mut actions = Vec::new();
         actions.push(Action::AddPerson);
         actions
+    }
+
+    pub fn get_person_repo(&self) -> DynPersonRepository {
+        MemGedcomxPersonRepo::arc_new(self.db.clone())
     }
 
     #[cfg(test)]
