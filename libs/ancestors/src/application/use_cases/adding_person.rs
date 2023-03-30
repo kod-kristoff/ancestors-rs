@@ -1,6 +1,7 @@
 use gedcomx_model::conclusion::Person;
 
 use crate::{application::repositories::DynPersonRepository, value_objects::Id};
+use super::UseCaseResult;
 
 #[derive(Debug, Clone)]
 pub struct AddPerson {
@@ -28,7 +29,7 @@ impl AddingPerson {
 }
 
 impl AddingPerson {
-    pub fn execute(&self, cmd: &AddPerson) -> Result<(), UseCaseError> {
+    pub fn execute(&self, cmd: &AddPerson) -> UseCaseResult<()> {
         let mut person = Person::with_id(cmd.id.clone())?;
         if let Some(name) = &cmd.name {
             person = person.name(name.as_str());
@@ -38,16 +39,7 @@ impl AddingPerson {
     }
 }
 
-#[derive(Debug)]
-pub enum UseCaseError {
-    GedcomxError(gedcomx_model::Error),
-}
 
-impl From<gedcomx_model::Error> for UseCaseError {
-    fn from(value: gedcomx_model::Error) -> Self {
-        Self::GedcomxError(value)
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;
