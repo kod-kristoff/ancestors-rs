@@ -12,3 +12,6 @@ Cargo.lock
 ancestors.log
 data/
 logs/
+
+# Editor config
+.vscode/
