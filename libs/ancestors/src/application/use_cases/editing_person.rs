@@ -4,34 +4,34 @@ use super::UseCaseResult;
 use crate::{application::repositories::DynPersonRepository, value_objects::Id};
 
 #[derive(Debug, Clone)]
-pub struct AddPerson {
+pub struct EditPerson {
     pub id: Id,
     pub extracted: bool,
     pub name: Option<String>,
 }
 
-impl Default for AddPerson {
-    fn default() -> Self {
+impl From<Person> for EditPerson {
+    fn from(value: Person) -> Self {
         Self {
-            id: Id::gen(),
+            id: value.id().into(),
             name: None,
             extracted: true,
         }
     }
 }
 
-pub struct AddingPerson {
+pub struct EditingPerson {
     repo: DynPersonRepository,
 }
 
-impl AddingPerson {
+impl EditingPerson {
     pub fn new(repo: DynPersonRepository) -> Self {
         Self { repo }
     }
 }
 
-impl AddingPerson {
-    pub fn execute(&self, cmd: &AddPerson) -> UseCaseResult<()> {
+impl EditingPerson {
+    pub fn execute(&self, cmd: &EditPerson) -> UseCaseResult<()> {
         let mut person = Person::with_id(cmd.id.clone())?;
         if let Some(name) = &cmd.name {
             person = person.name(name.as_str());
@@ -50,9 +50,9 @@ mod tests {
     #[test]
     fn adding_person_succeds() {
         let repo = InMemoryPersonRepo::arc_new();
-        let uc = AddingPerson::new(repo);
+        let uc = EditingPerson::new(repo);
 
-        let cmd = AddPerson::default();
+        let cmd = EditPerson::default();
         uc.execute(&cmd).unwrap();
     }
 }

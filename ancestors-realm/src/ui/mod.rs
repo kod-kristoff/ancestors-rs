@@ -248,6 +248,17 @@ impl Ui {
             // self.application
             //     .view(&Id::Game(GameId::PlayerHp), f, player_states[2]);
             // popups
+            // popups
+            if self
+                .application
+                .mounted(&Id::Session(SessionId::AddPersonPopup))
+            {
+                let popup = draw_area_in(f.size(), 70, 80);
+                f.render_widget(Clear, popup);
+                // make popup
+                self.application
+                    .view(&Id::Session(SessionId::AddPersonPopup), f, popup);
+            }
         })?;
         Ok(())
     }
@@ -345,6 +356,6 @@ pub fn reset_terminal() -> UiResult<()> {
     };
     use std::io;
     disable_raw_mode()?;
-    crossterm::execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture,);
+    let _ = crossterm::execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture,);
     Ok(())
 }

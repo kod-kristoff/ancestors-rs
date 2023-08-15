@@ -2,6 +2,7 @@
 
 use super::{Msg, SessionMsg};
 
+use crate::contrib::components::{Form, FormElement};
 use tui_realm_stdlib::{Input, Paragraph, Radio};
 use tuirealm::command::{Cmd, CmdResult, Direction, Position};
 use tuirealm::event::{Key, KeyEvent};
@@ -218,19 +219,22 @@ impl Component<Msg, NoUserEvent> for SaveFileNamePopup {
 
 #[derive(MockComponent)]
 pub struct AddPersonPopup {
-    component: Input,
+    component: FormElement,
 }
 
 impl AddPersonPopup {
     pub fn new() -> Self {
         Self {
-            component: Input::default()
+            component: FormElement::default()
                 .borders(
                     Borders::default()
                         .color(Color::LightRed)
                         .modifiers(BorderType::Double),
                 )
                 .foreground(Color::LightRed)
+                .default_layout()
+                // .name("name")
+                .label("name")
                 .placeholder("name", Style::default().fg(Color::Rgb(128, 128, 128)))
                 .title("Add new person…", Alignment::Center),
         }

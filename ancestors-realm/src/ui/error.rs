@@ -12,7 +12,7 @@ pub enum UiError {
     Application(ApplicationError),
     Io(std::io::Error),
     Terminal(TerminalError),
-    Unknown(String),
+    // Unknown(String),
 }
 
 impl Display for UiError {
@@ -21,7 +21,7 @@ impl Display for UiError {
             Self::Application(_) => write!(f, "application error"),
             Self::Io(_) => write!(f, "io error"),
             Self::Terminal(_) => write!(f, "terminal error"),
-            Self::Unknown(msg) => write!(f, "unknown: {}", msg),
+            // Self::Unknown(msg) => write!(f, "unknown: {}", msg),
             Self::FailedToGetSize => write!(f, "failed to get terminal size"),
         }
     }
@@ -34,7 +34,7 @@ impl StdError for UiError {
             Self::FailedToGetSize => None,
             Self::Io(err) => Some(err),
             Self::Terminal(err) => Some(err),
-            Self::Unknown(_) => None,
+            // Self::Unknown(_) => None,
         }
     }
 }

@@ -1,4 +1,5 @@
 mod app;
+mod dialogs;
 
 use ancestors::application::use_cases::{AddPerson, AddingPerson};
 use ancestors::infrastructure::MemGedcomxPersonRepo;
@@ -41,7 +42,7 @@ fn main() -> eyre::Result<()> {
         "Enter .exit to quit.\n",
         "Enter .help for usage hints.\n",
         "Connected to a transient in-memory database.\n",
-        "Use '.open FILENAME' to reopen on a persistent database."
+        "Use 'load FILENAME' to reopen on a persistent database."
     );
 
     // let mut db = Database::new("tempdb".to_string());
@@ -142,7 +143,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 name: Some(name.clone()),
                                 ..Default::default()
                             };
-                            let repo = MemGedcomxPersonRepo::arc_new(ctx.db().clone());
+                            let repo = ctx.person_repo(); //emGedcomxPersonRepo::arc_new(ctx.db().clone());
                             let uc = AddingPerson::new(repo);
                             uc.execute(&cmd).unwrap();
                         }
@@ -171,6 +172,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 }
                             };
                             println!("edit person {:?}", id);
+                            let person_opt = dialogs::edit_person(id, ctx)?;
                             ctx.state = AppState::EditPerson(id);
                         }
                         _ => todo!("handle other"),
@@ -181,7 +183,12 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
             }
         }
         AppState::EditPerson(ref id) => {
-            todo!("edit person")
+            let matches = edit_person_commands().try_get_matches()?;
+
+            match matches.subcommand() {
+                Some((name, _matches)) => unimplemented!("{}", name),
+                None => unreachable!("subcommand required"),
+            }
         }
     }
 
@@ -205,8 +212,8 @@ fn cli() -> Command {
         .multicall(true)
         .arg_required_else_help(true)
         .subcommand_required(true)
-        .subcommand_value_name("APPLET")
-        .subcommand_help_heading("APPLETS")
+        .subcommand_value_name("COMMAND")
+        .subcommand_help_heading("COMMANDS")
         .help_template(PARSER_TEMPLATE)
         .subcommand(
             Command::new("load")
@@ -249,4 +256,15 @@ fn person_commands() -> Command {
         .subcommand(Command::new("add").arg(Arg::new("name").required(true)))
         .subcommand(Command::new("list"))
         .subcommand(Command::new("edit").arg(Arg::new("id")))
+}
+
+fn edit_person_commands() -> Command {
+    Command::new("edit_person")
+        // .multicall(true)
+        .about("edit a person")
+        .arg_required_else_help(true)
+        .subcommand_required(true)
+        // .subcommand(Command::new("add").arg(Arg::new("name").required(true)))
+        .subcommand(Command::new("show"))
+    // .subcommand(Command::new("edit").arg(Arg::new("id")))
 }

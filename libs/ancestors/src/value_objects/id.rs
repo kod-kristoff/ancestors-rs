@@ -23,3 +23,11 @@ impl From<Id> for String {
         value.value.to_string()
     }
 }
+
+impl From<&IriRef> for Id {
+    fn from(value: &IriRef) -> Self {
+        Self {
+            value: value.to_owned(),
+        }
+    }
+}

@@ -1,3 +1,5 @@
+use ancestors::application::repositories::DynPersonRepository;
+use ancestors::infrastructure::MemGedcomxPersonRepo;
 use ancestors::{domain::GedcomX, infrastructure::SharedGedcomX};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
@@ -35,6 +37,10 @@ impl Default for AppContext {
 impl AppContext {
     pub fn db(&self) -> &SharedGedcomX {
         &self.db
+    }
+
+    pub fn person_repo(&self) -> DynPersonRepository {
+        MemGedcomxPersonRepo::arc_new(self.db().clone())
     }
 
     pub fn save_as(&mut self, path: &Path) -> io::Result<()> {
