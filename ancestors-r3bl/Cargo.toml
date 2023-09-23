@@ -1,0 +1,11 @@
+[package]
+name = "ancestors-r3bl"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ansi_term = "0.12.1"
+error-stack = "0.4.1"
+tokio = { version = "1.32.0", default-features = false, features = ["macros", "rt-multi-thread"] }
