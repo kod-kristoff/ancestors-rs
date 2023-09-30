@@ -5,12 +5,10 @@ authors = ["Kristoffer Andersson <kristoffer.andersson@gu.se>"]
 edition = "2021"
 
 [dependencies]
-crossterm = "0.25.0"
+crossterm = "0.27.0"
 env_logger = "0.9.3"
 eyre = "0.6.8"
 log = "0.4.17"
+ratatui = "0.23.0"
+tui-input = "0.8.0"
 
-[dependencies.tui]
-version = "0.19.0"
-default-features = false
-features = ["crossterm"]
