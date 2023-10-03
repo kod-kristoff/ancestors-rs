@@ -1,4 +1,3 @@
 mod mem_persons;
 
-
-pub use mem_persons::InMemoryPersonRepo;
+pub use self::mem_persons::InMemoryPersonRepo;

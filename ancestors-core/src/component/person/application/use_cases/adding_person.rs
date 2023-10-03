@@ -1,11 +1,12 @@
-use gedcomx_model::conclusion::Person;
+use crate::component::person::domain::Person;
+use crate::port::repository::SharedPersonRepository;
+use crate::shared_kernel::component::person::domain::PersonId;
 
 use super::UseCaseResult;
-use crate::{application::repositories::DynPersonRepository, value_objects::Id};
 
 #[derive(Debug, Clone)]
 pub struct AddPerson {
-    pub id: Id,
+    pub id: PersonId,
     pub extracted: bool,
     pub name: Option<String>,
 }
@@ -13,7 +14,7 @@ pub struct AddPerson {
 impl Default for AddPerson {
     fn default() -> Self {
         Self {
-            id: Id::gen(),
+            id: PersonId::gen(),
             name: None,
             extracted: true,
         }
@@ -21,11 +22,11 @@ impl Default for AddPerson {
 }
 
 pub struct AddingPerson {
-    repo: DynPersonRepository,
+    repo: SharedPersonRepository,
 }
 
 impl AddingPerson {
-    pub fn new(repo: DynPersonRepository) -> Self {
+    pub fn new(repo: SharedPersonRepository) -> Self {
         Self { repo }
     }
 }
@@ -46,7 +47,7 @@ impl AddingPerson {
 mod tests {
     use super::*;
 
-    use crate::application::repositories::mem::InMemoryPersonRepo;
+    use crate::infrastructure::repository::in_memory::InMemoryPersonRepo;
     #[test]
     fn adding_person_succeds() {
         let repo = InMemoryPersonRepo::arc_new();

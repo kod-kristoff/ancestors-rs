@@ -5,7 +5,7 @@ use ulid::Ulid;
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub struct PersonId {
-    inner: IriRef,
+    pub value: IriRef,
 }
 
 impl Default for PersonId {
@@ -16,7 +16,7 @@ impl Default for PersonId {
 }
 impl PersonId {
     pub fn new(value: IriRef) -> Self {
-        Self { inner: value }
+        Self { value }
     }
 
     pub fn gen() -> Self {
@@ -24,18 +24,26 @@ impl PersonId {
     }
 
     pub fn as_str(&self) -> &str {
-        self.inner.as_str()
+        self.value.as_str()
     }
 }
 
 impl Display for PersonId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(self.inner.as_str())
+        f.write_str(self.value.as_str())
     }
 }
 impl From<PersonId> for String {
     fn from(value: PersonId) -> Self {
-        value.inner.to_string()
+        value.value.to_string()
+    }
+}
+
+impl From<&IriRef> for PersonId {
+    fn from(value: &IriRef) -> Self {
+        Self {
+            value: value.clone(),
+        }
     }
 }
 
@@ -44,7 +52,7 @@ impl TryFrom<String> for PersonId {
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         let inner = IriRef::parse(value)?;
-        Ok(Self { inner })
+        Ok(Self { value: inner })
     }
 }
 

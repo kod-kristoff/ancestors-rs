@@ -1,8 +1,6 @@
-pub mod mem;
-mod persons;
-mod repository;
+mod person_repository;
 
 use std::sync::Arc;
 
-pub use persons::PersonRepository;
-pub type DynPersonRepository = Arc<dyn PersonRepository>;
+pub use self::person_repository::PersonRepository;
+pub type SharedPersonRepository = Arc<dyn PersonRepository>;

@@ -1,19 +1,4 @@
-pub mod application;
-pub mod domain;
+pub mod component;
 pub mod infrastructure;
-pub mod value_objects;
-
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub mod port;
+pub mod shared_kernel;

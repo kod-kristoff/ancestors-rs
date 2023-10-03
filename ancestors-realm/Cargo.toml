@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ancestors = { version = "0.1.0", path = "../libs/ancestors" }
+ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
 anyhow = "1.0.70"
 crossterm = "0.25"
 log = "0.4.17"
