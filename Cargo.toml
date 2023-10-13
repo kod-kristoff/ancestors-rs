@@ -3,7 +3,7 @@ resolver = "2"
 members = [
   "ancestors-core",
   "ancestors-infra-json",
-  "ancestors-main",
+  "ancestors-kernel",
   "ancestors-r3bl",
   "ancestors-realm",
   "gui",
