@@ -45,17 +45,23 @@ pub fn eprint_header(msg: &str) {
 }
 
 pub mod color_text_default_styles {
-    use ansi_term::{ANSIGenericString,
-                    Colour::{Blue, Green, Red},
-                    Style};
+    use ansi_term::{
+        ANSIGenericString,
+        Colour::{Blue, Green, Red},
+        Style,
+    };
 
     pub fn style_primary(text: &str) -> ANSIGenericString<str> {
         Green.bold().paint(text)
     }
 
-    pub fn style_prompt(text: &str) -> ANSIGenericString<str> { Blue.bold().paint(text) }
+    pub fn style_prompt(text: &str) -> ANSIGenericString<str> {
+        Blue.bold().paint(text)
+    }
 
-    pub fn style_error(text: &str) -> ANSIGenericString<str> { Red.bold().paint(text) }
+    pub fn style_error(text: &str) -> ANSIGenericString<str> {
+        Red.bold().paint(text)
+    }
 
     pub fn style_underline(text: &str) -> ANSIGenericString<str> {
         Style::new().underline().paint(text)
