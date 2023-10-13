@@ -11,3 +11,5 @@ members = [
   "repl",
   "libs/*",
 ]
+[workspace.dependencies]
+gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }

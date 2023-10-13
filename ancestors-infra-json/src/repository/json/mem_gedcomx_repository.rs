@@ -1,7 +1,9 @@
 use std::sync::{Arc, RwLock};
 
-use crate::{application::repositories::PersonRepository, domain::GedcomX};
-
+use ancestors_core::{
+    port::repository::{PersonRepository, PersonRepositoryError},
+    shared_kernel::component::person::domain::PersonId,
+};
 pub type SharedGedcomX = Arc<RwLock<GedcomX>>;
 
 pub struct MemGedcomxPersonRepo {
@@ -21,8 +23,8 @@ impl MemGedcomxPersonRepo {
 impl PersonRepository for MemGedcomxPersonRepo {
     fn get(
         &self,
-        id: &crate::value_objects::Id,
-    ) -> Result<Option<gedcomx_model::conclusion::Person>, ()> {
+        id: &PersonId,
+    ) -> Result<Option<gedcomx_model::conclusion::Person>, PersonRepositoryError> {
         Ok(self
             .storage
             .read()
@@ -33,7 +35,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
             .cloned())
     }
 
-    fn save(&self, person: gedcomx_model::conclusion::Person) -> Result<(), ()> {
+    fn save(&self, person: gedcomx_model::conclusion::Person) -> Result<(), PersonRepositoryError> {
         self.storage.write().unwrap().add_person(person);
         Ok(())
     }
