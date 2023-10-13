@@ -1,4 +1,4 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::{Event as CrosstermEvent, KeyCode, KeyEvent, KeyModifiers};
 use tui_input::backend::crossterm::EventHandler;
 
 use crate::app::{App, CurrentScreen};
@@ -28,7 +28,9 @@ pub fn handle_key_event(app: &mut App, key_event: KeyEvent) {
             KeyCode::Enter => {
                 app.load_file(app.file_input.to_string());
             }
-            _ => app.file_input.handle_event(key_event.into()),
+            _ => {
+                app.file_input.handle_event(&CrosstermEvent::Key(key_event));
+            }
         },
         _ => match key_event.code {
             KeyCode::Esc | KeyCode::Char('q') => app.quit(),

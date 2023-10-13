@@ -1,8 +1,7 @@
 mod app;
 mod dialogs;
 
-use ancestors::application::use_cases::{AddPerson, AddingPerson};
-use ancestors::infrastructure::MemGedcomxPersonRepo;
+use ancestors_core::component::person::application::service::person_service::AddPerson;
 use clap::{crate_name, crate_version, value_parser, Arg, Command};
 use env_logger::Env;
 use rustyline::error::ReadlineError;
@@ -133,7 +132,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                     match submatches.subcommand() {
                         Some(("list", _matches)) => {
                             println!("list persons");
-                            println!("persons = {:#?}", ctx.db().read().unwrap().persons());
+                            println!("persons = {:#?}", ctx.db().0.read().unwrap().persons());
                         }
                         Some(("add", add_matches)) => {
                             let name: &String = add_matches.get_one("name").unwrap();
@@ -144,8 +143,10 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 ..Default::default()
                             };
                             let repo = ctx.person_repo(); //emGedcomxPersonRepo::arc_new(ctx.db().clone());
-                            let uc = AddingPerson::new(repo);
-                            uc.execute(&cmd).unwrap();
+                            todo!(
+                                "let uc = AddingPerson::new(repo);
+                            uc.execute(&cmd).unwrap();"
+                            );
                         }
                         Some(("edit", edit_matches)) => {
                             let id: Option<&String> = edit_matches.get_one("id");
@@ -153,7 +154,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 Some(id) => id.clone(),
                                 None => {
                                     for (i, person) in
-                                        ctx.db().read().unwrap().persons().iter().enumerate()
+                                        ctx.db().0.read().unwrap().persons().iter().enumerate()
                                     {
                                         let name: &str = if person.names().is_empty() {
                                             ""
@@ -172,7 +173,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 }
                             };
                             println!("edit person {:?}", id);
-                            let person_opt = dialogs::edit_person(id, ctx)?;
+                            let person_opt = dialogs::edit_person(id.clone(), ctx)?;
                             ctx.state = AppState::EditPerson(id);
                         }
                         _ => todo!("handle other"),
@@ -183,7 +184,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
             }
         }
         AppState::EditPerson(ref id) => {
-            let matches = edit_person_commands().try_get_matches()?;
+            let matches = dialogs::edit_person_commands().try_get_matches()?;
 
             match matches.subcommand() {
                 Some((name, _matches)) => unimplemented!("{}", name),
@@ -256,15 +257,4 @@ fn person_commands() -> Command {
         .subcommand(Command::new("add").arg(Arg::new("name").required(true)))
         .subcommand(Command::new("list"))
         .subcommand(Command::new("edit").arg(Arg::new("id")))
-}
-
-fn edit_person_commands() -> Command {
-    Command::new("edit_person")
-        // .multicall(true)
-        .about("edit a person")
-        .arg_required_else_help(true)
-        .subcommand_required(true)
-        // .subcommand(Command::new("add").arg(Arg::new("name").required(true)))
-        .subcommand(Command::new("show"))
-    // .subcommand(Command::new("edit").arg(Arg::new("id")))
 }

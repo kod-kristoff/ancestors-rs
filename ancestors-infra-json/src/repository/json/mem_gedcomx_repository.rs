@@ -4,7 +4,16 @@ use ancestors_core::{
     port::repository::{PersonRepository, PersonRepositoryError},
     shared_kernel::component::person::domain::PersonId,
 };
-pub type SharedGedcomX = Arc<RwLock<GedcomX>>;
+
+use gedcomx_model::GedcomX;
+#[derive(Clone)]
+pub struct SharedGedcomX(pub Arc<RwLock<GedcomX>>);
+
+impl Default for SharedGedcomX {
+    fn default() -> Self {
+        Self(Arc::new(RwLock::new(GedcomX::new())))
+    }
+}
 
 pub struct MemGedcomxPersonRepo {
     storage: SharedGedcomX,
@@ -27,6 +36,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
     ) -> Result<Option<gedcomx_model::conclusion::Person>, PersonRepositoryError> {
         Ok(self
             .storage
+            .0
             .read()
             .expect("")
             .persons()
@@ -36,7 +46,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
     }
 
     fn save(&self, person: gedcomx_model::conclusion::Person) -> Result<(), PersonRepositoryError> {
-        self.storage.write().unwrap().add_person(person);
+        self.storage.0.write().unwrap().add_person(person);
         Ok(())
     }
 }

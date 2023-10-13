@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
+ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }
 clap = { version = "4.1.4", features = ["cargo"] }
 env_logger = "0.10.0"
 eyre = "0.6.8"

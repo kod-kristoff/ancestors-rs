@@ -1,4 +1,4 @@
-use ancestors::domain::conclusion::Person;
+use ancestors_core::component::person::domain::Person;
 use bonsaidb::{
     core::schema::Collection,
     local::{

@@ -3,17 +3,18 @@
 //! A Db session
 use std::sync::{Arc, RwLock};
 
-use ancestors::application::repositories::DynPersonRepository;
-use ancestors::infrastructure::MemGedcomxPersonRepo;
-use ancestors::{domain::GedcomX, infrastructure::SharedGedcomX};
-
 mod action;
 mod effect;
+
+use ancestors_core::port::repository::SharedPersonRepository;
+use ancestors_infra_json::repository::json::mem_gedcomx_repository::{
+    MemGedcomxPersonRepo, SharedGedcomX,
+};
 
 pub use self::action::Action;
 pub use self::effect::Message;
 
-#[derive(Debug)]
+// #[derive(Debug)]
 pub struct Session {
     db: SharedGedcomX,
     metadata: SessionMetadata,
@@ -25,7 +26,7 @@ pub struct SessionMetadata {}
 impl Default for Session {
     fn default() -> Self {
         Self {
-            db: Arc::new(RwLock::new(GedcomX::new())),
+            db: SharedGedcomX::default(),
             metadata: Default::default(),
         }
     }
@@ -57,7 +58,7 @@ impl Session {
         actions
     }
 
-    pub fn get_person_repo(&self) -> DynPersonRepository {
+    pub fn get_person_repo(&self) -> SharedPersonRepository {
         MemGedcomxPersonRepo::arc_new(self.db.clone())
     }
 

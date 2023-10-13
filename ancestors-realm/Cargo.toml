@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
+ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }
 anyhow = "1.0.70"
 crossterm = "0.25"
 log = "0.4.17"
@@ -15,3 +16,7 @@ serde_json = "1.0.95"
 simplelog = "^0.12"
 tui-realm-stdlib = "1.2.0"
 tuirealm = "1.8.0"
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
+tempfile = "3.8.0"

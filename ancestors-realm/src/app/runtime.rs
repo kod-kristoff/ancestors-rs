@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
-use ancestors::application::use_cases::{AddPerson, AddingPerson};
+use ancestors_core::component::person::application::service::person_service::AddPerson;
 
-use crate::app::{AppResult, Session};
 use crate::app::session::Action;
+use crate::app::{AppResult, Session};
 use crate::serialization::sessions::SavedSessions;
 use crate::ui::{Id, LoadDbId, LoadDbMsg, MenuId, MenuMsg, Msg, SessionMsg, Ui};
 
@@ -143,10 +143,19 @@ impl Runtime {
             },
             SessionMsg::CloseAddPersonPopup => todo!(),
             SessionMsg::AddPerson(name) => {
-                let cmd: AddPerson = AddPerson { name: Some(name), ..Default::default() };
-                let repo = self.session.as_ref().expect("runtime: session should exist").get_person_repo();
-                let uc = AddingPerson::new(repo);
-                uc.execute(&cmd)?;
+                let cmd: AddPerson = AddPerson {
+                    name: Some(name),
+                    ..Default::default()
+                };
+                let repo = self
+                    .session
+                    .as_ref()
+                    .expect("runtime: session should exist")
+                    .get_person_repo();
+                todo!(
+                    "let uc = AddingPerson::new(repo);
+                uc.execute(&cmd)?;"
+                );
             }
             SessionMsg::CloseErrorPopup => todo!(),
             SessionMsg::CloseInventory => todo!(),
@@ -167,6 +176,4 @@ impl Runtime {
         self.session = Some(session);
         Ok(())
     }
-
-
 }
