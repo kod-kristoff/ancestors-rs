@@ -1,7 +1,8 @@
-use crate::component::person::application::UseCaseResult;
-use crate::component::person::domain::Person;
+use crate::domain::Person;
 use crate::port::repository::SharedPersonRepository;
-use crate::shared_kernel::component::person::domain::PersonId;
+use crate::shared_kernel::PersonId;
+
+use super::UseCaseResult;
 
 #[derive(Debug, Clone)]
 pub struct AddPerson {
@@ -62,7 +63,7 @@ pub struct EditPerson {
 impl From<Person> for EditPerson {
     fn from(value: Person) -> Self {
         Self {
-            id: value.id().into(),
+            id: value.id().clone(),
             // name: None,
             // extracted: true,
         }

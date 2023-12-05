@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gedcomx-model = { workspace = true }
+# gedcomx-model = { workspace = true }
 hashbrown = "0.13.2"
+oxiri = { version = "0.2.2", features = ["serde"] }
+serde = { workspace = true, features = ["derive"] }
 ulid = "1.0.0"

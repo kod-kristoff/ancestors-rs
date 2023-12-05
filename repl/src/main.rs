@@ -1,7 +1,7 @@
 mod app;
 mod dialogs;
 
-use ancestors_core::component::person::application::service::person_service::AddPerson;
+use ancestors_core::application::service::AddPerson;
 use clap::{crate_name, crate_version, value_parser, Arg, Command};
 use env_logger::Env;
 use rustyline::error::ReadlineError;
@@ -132,7 +132,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                     match submatches.subcommand() {
                         Some(("list", _matches)) => {
                             println!("list persons");
-                            println!("persons = {:#?}", ctx.db().0.read().unwrap().persons());
+                            println!("persons = {:#?}", ctx.db().0.read().unwrap().iter());
                         }
                         Some(("add", add_matches)) => {
                             let name: &String = add_matches.get_one("name").unwrap();
@@ -154,7 +154,7 @@ fn respond(line: &str, ctx: &mut AppContext) -> eyre::Result<bool> {
                                 Some(id) => id.clone(),
                                 None => {
                                     for (i, person) in
-                                        ctx.db().0.read().unwrap().persons().iter().enumerate()
+                                        ctx.db().0.read().unwrap().values().enumerate()
                                     {
                                         let name: &str = if person.names().is_empty() {
                                             ""

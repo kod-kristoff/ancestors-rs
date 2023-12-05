@@ -11,5 +11,7 @@ members = [
   "repl",
   "libs/*",
 ]
+
 [workspace.dependencies]
 gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }
+serde = { version = "1.0.193" }

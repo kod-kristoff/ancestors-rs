@@ -1,9 +1,9 @@
 use std::fmt::Display;
 
-use gedcomx_model::common::{IriParseError, IriRef};
+use crate::shared_kernel::{IriParseError, IriRef};
 use ulid::Ulid;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct PersonId {
     pub value: IriRef,
 }

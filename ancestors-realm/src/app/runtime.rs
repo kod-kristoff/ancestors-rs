@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use ancestors_core::component::person::application::service::person_service::AddPerson;
+use ancestors_core::application::service::AddPerson;
 
 use crate::app::session::Action;
 use crate::app::{AppResult, Session};

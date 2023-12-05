@@ -1,9 +1,9 @@
 use hashbrown::HashMap;
 use std::sync::{Arc, RwLock};
 
-use crate::component::person::domain::Person;
+use crate::domain::Person;
 use crate::port::repository::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
-use crate::shared_kernel::{component::person::domain::PersonId, IriRef};
+use crate::shared_kernel::{IriRef, PersonId};
 
 pub struct InMemoryPersonRepo {
     storage: Arc<RwLock<HashMap<IriRef, Person>>>,
@@ -29,7 +29,7 @@ impl PersonRepository for InMemoryPersonRepo {
         self.storage
             .write()
             .unwrap()
-            .insert(person.id().clone(), person.clone());
+            .insert(person.id().value.clone(), person.clone());
         Ok(())
     }
 }

@@ -1,4 +1,4 @@
-use ancestors_core::component::person::application::UseCaseError;
+use ancestors_core::application::service::UseCaseError;
 
 use crate::serialization::sessions::SavedSessionError;
 use crate::ui::UiError;

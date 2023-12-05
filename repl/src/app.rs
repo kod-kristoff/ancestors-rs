@@ -4,12 +4,12 @@ use std::{fs, io};
 
 use ancestors_core::port::repository::SharedPersonRepository;
 use ancestors_infra_json::repository::json::mem_gedcomx_repository::{
-    MemGedcomxPersonRepo, SharedGedcomX,
+    MemGedcomxPersonRepo, SharedMemStorage,
 };
 
 #[derive(Clone)]
 pub struct AppContext {
-    db: SharedGedcomX,
+    db: SharedMemStorage,
     db_path: Option<PathBuf>,
     pub state: AppState,
 }
@@ -29,7 +29,7 @@ impl Default for AppState {
 impl Default for AppContext {
     fn default() -> Self {
         Self {
-            db: SharedGedcomX::default(),
+            db: SharedMemStorage::default(),
             db_path: None,
             state: AppState::default(),
         }
@@ -37,7 +37,7 @@ impl Default for AppContext {
 }
 
 impl AppContext {
-    pub fn db(&self) -> &SharedGedcomX {
+    pub fn db(&self) -> &SharedMemStorage {
         &self.db
     }
 
@@ -57,7 +57,7 @@ impl AppContext {
         let file = fs::File::open(path)?;
         let reader = io::BufReader::new(file);
 
-        self.db = SharedGedcomX(Arc::new(RwLock::new(
+        self.db = SharedMemStorage(Arc::new(RwLock::new(
             serde_json::from_reader(reader).unwrap(),
         )));
         self.db_path = Some(path.into());

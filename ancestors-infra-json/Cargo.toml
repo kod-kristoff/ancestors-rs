@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
-gedcomx-model = { workspace = true }
+# gedcomx-model = { workspace = true }

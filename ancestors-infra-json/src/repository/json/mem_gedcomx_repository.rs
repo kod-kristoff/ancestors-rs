@@ -1,52 +1,49 @@
-use std::sync::{Arc, RwLock};
-
-use ancestors_core::{
-    port::repository::{PersonRepository, PersonRepositoryError},
-    shared_kernel::component::person::domain::PersonId,
+use std::{
+    collections::HashMap,
+    sync::{Arc, RwLock},
 };
 
-use gedcomx_model::GedcomX;
-#[derive(Clone)]
-pub struct SharedGedcomX(pub Arc<RwLock<GedcomX>>);
+use ancestors_core::{
+    domain::Person,
+    port::repository::{PersonRepository, PersonRepositoryError},
+    shared_kernel::PersonId,
+};
 
-impl Default for SharedGedcomX {
+// use gedcomx_model::GedcomX;
+#[derive(Clone)]
+pub struct SharedMemStorage(pub Arc<RwLock<HashMap<PersonId, Person>>>);
+
+impl Default for SharedMemStorage {
     fn default() -> Self {
-        Self(Arc::new(RwLock::new(GedcomX::new())))
+        Self(Arc::new(RwLock::new(HashMap::new())))
     }
 }
 
 pub struct MemGedcomxPersonRepo {
-    storage: SharedGedcomX,
+    storage: SharedMemStorage,
 }
 
 impl MemGedcomxPersonRepo {
-    pub fn new(storage: SharedGedcomX) -> Self {
+    pub fn new(storage: SharedMemStorage) -> Self {
         Self { storage }
     }
 
-    pub fn arc_new(storage: SharedGedcomX) -> Arc<Self> {
+    pub fn arc_new(storage: SharedMemStorage) -> Arc<Self> {
         Arc::new(Self::new(storage))
     }
 }
 
 impl PersonRepository for MemGedcomxPersonRepo {
-    fn get(
-        &self,
-        id: &PersonId,
-    ) -> Result<Option<gedcomx_model::conclusion::Person>, PersonRepositoryError> {
-        Ok(self
-            .storage
-            .0
-            .read()
-            .expect("")
-            .persons()
-            .iter()
-            .find(|p| p.id() == &id.value)
-            .cloned())
+    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
+        Ok(self.storage.0.read().expect("").get(id).cloned())
     }
 
-    fn save(&self, person: gedcomx_model::conclusion::Person) -> Result<(), PersonRepositoryError> {
-        self.storage.0.write().unwrap().add_person(person);
+    fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
+        self.storage
+            .0
+            .write()
+            .unwrap()
+            .insert(person.id().clone(), person);
         Ok(())
     }
 }

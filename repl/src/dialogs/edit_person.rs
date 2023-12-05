@@ -1,4 +1,4 @@
-use ancestors_core::component::person::application::service::person_service::EditPerson;
+use ancestors_core::application::service::EditPerson;
 use clap::Command;
 
 use crate::app::AppContext;

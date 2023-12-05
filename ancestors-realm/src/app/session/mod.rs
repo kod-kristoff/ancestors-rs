@@ -8,7 +8,7 @@ mod effect;
 
 use ancestors_core::port::repository::SharedPersonRepository;
 use ancestors_infra_json::repository::json::mem_gedcomx_repository::{
-    MemGedcomxPersonRepo, SharedGedcomX,
+    MemGedcomxPersonRepo, SharedMemStorage,
 };
 
 pub use self::action::Action;
@@ -16,7 +16,7 @@ pub use self::effect::Message;
 
 // #[derive(Debug)]
 pub struct Session {
-    db: SharedGedcomX,
+    db: SharedMemStorage,
     metadata: SessionMetadata,
 }
 
@@ -26,7 +26,7 @@ pub struct SessionMetadata {}
 impl Default for Session {
     fn default() -> Self {
         Self {
-            db: SharedGedcomX::default(),
+            db: SharedMemStorage::default(),
             metadata: Default::default(),
         }
     }

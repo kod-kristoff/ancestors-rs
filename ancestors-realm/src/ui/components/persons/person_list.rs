@@ -8,7 +8,7 @@ use crate::app::Session;
 
 use super::Msg;
 
-use ancestors_core::component::person::domain::Person;
+use ancestors_core::domain::Person;
 use tui_realm_stdlib::List;
 use tuirealm::props::{BorderType, Borders, Color, TextSpan};
 use tuirealm::{Component, Event, MockComponent, NoUserEvent};
