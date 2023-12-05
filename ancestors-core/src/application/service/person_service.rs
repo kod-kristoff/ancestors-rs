@@ -82,6 +82,8 @@ mod tests {
 
         let cmd = AddPerson::default();
         service.add(&cmd).unwrap();
+
+        let person = repo.get(&cmd.id).unwrap();
     }
     #[test]
     fn editing_person_succeds() {
