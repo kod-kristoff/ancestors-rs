@@ -6,6 +6,7 @@ members = [
   "ancestors-kernel",
   "ancestors-r3bl",
   "ancestors-realm",
+  "async-tui",
   "gui",
   "tui",
   "repl",
