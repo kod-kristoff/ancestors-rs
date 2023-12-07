@@ -21,6 +21,18 @@ pub enum Event {
     Resize(u16, u16),
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EventState {
+    Consumed,
+    NotConsumed,
+}
+
+impl EventState {
+    pub fn is_consumed(&self) -> bool {
+        *self == Self::Consumed
+    }
+}
+
 /// Terminal event handler.
 #[derive(Debug)]
 pub struct EventHandler {

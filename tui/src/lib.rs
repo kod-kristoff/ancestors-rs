@@ -1,6 +1,7 @@
 use std::io;
 
-use app::App;
+use app::AppComponent;
+use crossterm::event::KeyEvent;
 use event::Event;
 use tui::Tui;
 use update::handle_key_event;
@@ -20,15 +21,23 @@ pub mod tui;
 // pub mod handler;
 pub mod update;
 
-pub fn run_app(tui: &mut Tui, app: &mut App) -> eyre::Result<()> {
+pub fn run_app(tui: &mut Tui, app: &mut AppComponent) -> eyre::Result<()> {
     // Start the main loop.
-    while !app.should_quit {
+    // while !app.should_quit {
+    loop {
         // Render the user interface.
         tui.draw(app)?;
         // Handle events.
         match tui.events.next()? {
             Event::Tick => {}
-            Event::Key(key_event) => handle_key_event(app, key_event),
+            Event::Key(key_event) => match app.handle_key_event(key_event) {
+                Ok(state) => {
+                    if !state.is_consumed() {
+                        break;
+                    }
+                }
+                Err(_) => unimplemented!(),
+            },
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
         };

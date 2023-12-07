@@ -1,4 +1,4 @@
-use ancestors_tui::app::App;
+use ancestors_tui::app::AppComponent;
 use ancestors_tui::event::{Event, EventHandler};
 use ancestors_tui::run_app;
 use ancestors_tui::tui::Tui;
@@ -7,7 +7,7 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 
 fn main() -> Result<()> {
     // Create an application.
-    let mut app = App::new();
+    let mut app = AppComponent::new();
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(std::io::stderr());

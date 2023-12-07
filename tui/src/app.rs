@@ -1,4 +1,8 @@
+use ancestors_kernel::context::AppContext;
+use crossterm::event::KeyEvent;
 use tui_input::Input;
+
+use crate::event::EventState;
 
 /// Application.
 #[derive(Debug, Default)]
@@ -8,19 +12,25 @@ pub struct App {
     /// counter
     pub counter: u8,
     /// current screen
-    pub current_screen: CurrentScreen,
+    // pub current_screen: CurrentScreen,
     pub filename: String,
     pub file_input: Input,
+    pub ctx: AppContext,
+}
+
+pub struct AppComponent {
+    focus: Focus,
+    ctx: AppContext,
 }
 
 #[derive(Debug)]
-pub enum CurrentScreen {
+pub enum Focus {
     Main,
     Loading,
     Exiting,
 }
 
-impl Default for CurrentScreen {
+impl Default for Focus {
     fn default() -> Self {
         Self::Loading
     }
@@ -41,7 +51,7 @@ impl App {
     }
 
     pub fn load_file(&mut self, filename: String) {
-        self.current_screen = CurrentScreen::Main;
+        // self.current_screen = CurrentScreen::Main;
     }
     pub fn increment_counter(&mut self) {
         if let Some(res) = self.counter.checked_add(1) {
@@ -53,6 +63,31 @@ impl App {
         if let Some(res) = self.counter.checked_sub(1) {
             self.counter = res;
         }
+    }
+}
+
+impl Default for AppComponent {
+    fn default() -> Self {
+        Self {
+            focus: Focus::default(),
+            ctx: AppContext::default(),
+        }
+    }
+}
+impl AppComponent {
+    pub fn new() -> AppComponent {
+        Self::default()
+    }
+
+    pub fn handle_key_event(&mut self, key_event: KeyEvent) -> eyre::Result<EventState> {
+        if self.components_key_event(key_event)?.is_consumed() {
+            return Ok(EventState::Consumed);
+        }
+
+        if self.move_focus_by_key(key_event)?.is_consumed() {
+            return Ok(EventState::Consumed);
+        }
+        Ok(EventState::NotConsumed)
     }
 }
 // use tui::backend::Backend;
