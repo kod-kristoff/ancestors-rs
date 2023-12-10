@@ -6,10 +6,11 @@ use crossterm::{
 };
 use eyre::Result;
 
-pub type Frame<'a> = ratatui::Frame<'a, ratatui::backend::CrosstermBackend<std::io::Stderr>>;
+// pub type Frame<'a> = ratatui::Frame<'a, ratatui::backend::CrosstermBackend<std::io::Stderr>>;
+pub use ratatui::Frame;
 pub type CrosstermTerminal = ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stderr>>;
 
-use crate::{app::App, event::EventHandler, ui::ui};
+use crate::{app::App, event::EventHandler};
 
 /// Representation of a terminal user interface.
 ///
@@ -17,7 +18,7 @@ use crate::{app::App, event::EventHandler, ui::ui};
 /// initializing the interface and handling the draw events.
 pub struct Tui {
     /// Interface to the Terminal.
-    terminal: CrosstermTerminal,
+    pub terminal: CrosstermTerminal,
     /// Terminal event handler.
     pub events: EventHandler,
 }
@@ -52,10 +53,10 @@ impl Tui {
     ///
     /// [`Draw`]: tui::Terminal::draw
     /// [`rendering`]: crate::ui:render
-    pub fn draw(&mut self, app: &mut App) -> io::Result<()> {
-        self.terminal.draw(|frame| ui(app, frame))?;
-        Ok(())
-    }
+    // pub fn draw(&mut self, app: &mut App) -> io::Result<()> {
+    //     self.terminal.draw(|frame| ui(app, frame))?;
+    //     Ok(())
+    // }
 
     /// Resets the terminal interface.
     ///

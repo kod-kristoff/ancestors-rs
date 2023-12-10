@@ -1,5 +1,7 @@
+use ancestors_kernel::context::AppContext;
 use ancestors_tui::app::AppComponent;
-use ancestors_tui::event::{Event, EventHandler};
+use ancestors_tui::config::Config;
+use ancestors_tui::event::EventHandler;
 use ancestors_tui::run_app;
 use ancestors_tui::tui::Tui;
 use eyre::Result;
@@ -7,7 +9,9 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 
 fn main() -> Result<()> {
     // Create an application.
-    let mut app = AppComponent::new();
+    let config = Config::new()?;
+    let ctx = AppContext::default();
+    let mut app = AppComponent::new(config, ctx);
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(std::io::stderr());

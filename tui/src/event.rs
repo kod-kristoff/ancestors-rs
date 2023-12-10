@@ -13,12 +13,18 @@ use eyre::Result;
 pub enum Event {
     /// Terminal tick.
     Tick,
+    /// Input.
+    Input(InputEvent),
+    /// Terminal resize.
+    Resize(u16, u16),
+}
+/// Terminal events.
+#[derive(Clone, Copy, Debug)]
+pub enum InputEvent {
     /// Key press.
     Key(KeyEvent),
     /// Mouse click/scroll.
     Mouse(MouseEvent),
-    /// Terminal resize.
-    Resize(u16, u16),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -60,8 +66,10 @@ impl EventHandler {
 
                     if event::poll(timeout).expect("no events available") {
                         match event::read().expect("unable to read event") {
-                            CrosstermEvent::Key(e) => sender.send(Event::Key(e)),
-                            CrosstermEvent::Mouse(e) => sender.send(Event::Mouse(e)),
+                            CrosstermEvent::Key(e) => sender.send(Event::Input(InputEvent::Key(e))),
+                            CrosstermEvent::Mouse(e) => {
+                                sender.send(Event::Input(InputEvent::Mouse(e)))
+                            }
                             CrosstermEvent::Resize(w, h) => sender.send(Event::Resize(w, h)),
                             _ => unimplemented!(),
                         }
