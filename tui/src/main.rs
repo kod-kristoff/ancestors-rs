@@ -2,8 +2,8 @@ use ancestors_kernel::context::AppContext;
 use ancestors_tui::app::AppComponent;
 use ancestors_tui::config::Config;
 use ancestors_tui::event::EventHandler;
-use ancestors_tui::run_app;
-use ancestors_tui::tui::Tui;
+use ancestors_tui::kx_tui::run_app;
+use ancestors_tui::kx_tui::Tui;
 use eyre::Result;
 use ratatui::{backend::CrosstermBackend, Terminal};
 
@@ -27,20 +27,3 @@ fn main() -> Result<()> {
     res?;
     Ok(())
 }
-// // use std::{fs, io};
-
-// // use env_logger::{Env, Target};
-
-// // fn main() {
-// //     let log_file = fs::File::create("logs/ancestors.log").expect("creating log file");
-// //     let log_writer = Box::new(io::BufWriter::new(log_file));
-// //     env_logger::Builder::from_env(Env::default().default_filter_or("trace"))
-// //         // .format_timestamp(None)
-// //         .target(Target::Pipe(log_writer))
-// //         .init();
-
-// //     if let Err(err) = ancestors_tui::try_main() {
-// //         println!("Error occured: {:#?}", err);
-// //         std::process::exit(1);
-// //     }
-// // }

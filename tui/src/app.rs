@@ -1,19 +1,14 @@
+pub mod components;
+
 use ancestors_kernel::context::AppContext;
-use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::prelude::{Constraint, Direction, Layout};
 use tui_input::Input;
 
-use crate::{
-    action::Action,
-    components::{
-        menu::MenuComponent, person_editor::PersonEditorComponent, status::StatusComponent,
-        Component,
-    },
-    config::Config,
-    event::{EventState, InputEvent},
-    mode::Mode,
-    tui::Frame,
+use self::components::{
+    menu::MenuComponent, person_editor::PersonEditorComponent, status::StatusComponent,
 };
+use crate::kx_tui::{Component, Frame};
+use crate::{action::Action, config::Config, event::InputEvent, mode::Mode};
 
 /// Application.
 #[derive(Default)]

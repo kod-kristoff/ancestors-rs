@@ -4,19 +4,15 @@ use eyre::Result;
 use ratatui::layout::Rect;
 // use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{
-    action::Action,
-    event::{EventState, InputEvent},
-    tui::Frame,
-};
+use crate::{action::Action, event::InputEvent, kx_tui::Frame};
 
-// pub mod fps;
-pub mod home;
-pub mod menu;
-pub mod person_editor;
-pub mod status;
+// // pub mod fps;
+// pub mod home;
+// pub mod menu;
+// pub mod person_editor;
+// pub mod status;
 
-mod shared;
+// mod shared;
 
 /// `Component` is a trait that represents a visual and interactive element of the user interface.
 /// Implementors of this trait can be registered with the main application loop and will be able to receive events,

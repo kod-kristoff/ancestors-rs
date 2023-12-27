@@ -1,6 +1,7 @@
-use ratatui::{text::Line, widgets::Paragraph};
+use ratatui::widgets::Paragraph;
 
-use super::{shared::container::render_container, Component};
+use super::shared::container::render_container;
+use crate::kx_tui::Component;
 
 pub struct StatusComponent {
     status: String,

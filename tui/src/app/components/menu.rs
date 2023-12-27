@@ -8,10 +8,8 @@ use ratatui::{
 
 use crate::{action::Action, config::Config, event::EventState, mode::Mode};
 
-use super::{
-    shared::{constants::HIGHLIGHT_COLOR, container::render_container},
-    Component,
-};
+use super::shared::{constants::HIGHLIGHT_COLOR, container::render_container};
+use crate::kx_tui::Component;
 
 #[derive(Copy, Clone, Debug)]
 pub enum MenuItem {

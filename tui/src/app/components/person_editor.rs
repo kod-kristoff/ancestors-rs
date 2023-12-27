@@ -1,8 +1,8 @@
-use ratatui::layout::{Layout, Direction, Constraint};
+use ratatui::layout::{Constraint, Direction, Layout};
 
 use crate::config::Config;
 
-use super::Component;
+use crate::kx_tui::Component;
 
 pub struct PersonEditorComponent {
     config: Config,
@@ -22,7 +22,8 @@ impl Component for PersonEditorComponent {
     ) -> eyre::Result<()> {
         let mut chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Percentage(100),Constraint::Percentage(0)]).split(rect);
+            .constraints([Constraint::Percentage(100), Constraint::Percentage(0)])
+            .split(area);
         todo!()
     }
 }

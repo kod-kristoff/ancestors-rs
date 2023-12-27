@@ -14,7 +14,7 @@
 
 use ratatui::{prelude::Rect, widgets::Paragraph, Frame};
 
-use super::Component;
+use crate::kx_tui::Component;
 
 #[derive(Default)]
 pub struct Home {
