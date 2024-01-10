@@ -21,6 +21,23 @@ impl Default for AddPerson {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct UpsertPerson {
+    pub id: Option<PersonId>,
+    pub extracted: bool,
+    pub name: Option<String>,
+}
+
+impl Default for UpsertPerson {
+    fn default() -> Self {
+        Self {
+            id: None,
+            name: None,
+            extracted: true,
+        }
+    }
+}
+
 pub struct PersonService {
     repo: SharedPersonRepository,
 }
