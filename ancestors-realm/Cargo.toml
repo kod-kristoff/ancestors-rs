@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
 ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }
-anyhow = "1.0.70"
+anyhow = "1.0.79"
 crossterm = "0.25"
 log = "0.4.17"
 serde = { version = "1.0.159", features = ["derive"] }
