@@ -9,7 +9,7 @@ ancestors-kernel = { version = "0.1.0", path = "../ancestors-kernel" }
 config = { version = "0.13.4", default-features = false, features = ["json", "json5_rs", "json5"] }
 crossterm = "0.27.0"
 env_logger = "0.9.3"
-eyre = "0.6.8"
+eyre = "0.6.12"
 json5 = "0.4.1"
 log = "0.4.17"
 ratatui = "0.24.0"
