@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../../ancestors-core" }
 bonsaidb = { version = "0.4.1", default-features = false, features = ["local"] }
-serde = "1.0.152"
+serde = { workspace = true }
