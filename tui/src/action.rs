@@ -45,6 +45,7 @@ impl<'de> Deserialize<'de> for Action {
                     "Quit" => Ok(Action::Quit),
                     "Refresh" => Ok(Action::Refresh),
                     "Help" => Ok(Action::Help),
+                    "AddPerson" => Ok(Action::AddPerson),
                     data if data.starts_with("Error(") => {
                         let error_msg = data.trim_start_matches("Error(").trim_end_matches(")");
                         Ok(Action::Error(error_msg.to_string()))
