@@ -6,7 +6,6 @@ members = [
   "ancestors-kernel",
   "tui",
   "repl",
-  "libs/*",
 ]
 
 [workspace.dependencies]
