@@ -11,3 +11,4 @@ members = [
 [workspace.dependencies]
 gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }
 serde = { version = "1" }
+serde_json = { version = "1" }
