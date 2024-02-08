@@ -3,6 +3,11 @@ name = "repl"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "repl"
+test = false
+doctest = false
+
 [dependencies]
 ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
 ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }

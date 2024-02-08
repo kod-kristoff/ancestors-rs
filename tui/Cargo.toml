@@ -4,6 +4,15 @@ version = "0.1.0"
 authors = ["Kristoffer Andersson <kristoffer.andersson@gu.se>"]
 edition = "2021"
 
+[lib]
+doctest = false
+
+[[bin]]
+doctest = false
+test = false
+path = "main.rs"
+name = "ancestors-tui"
+
 [dependencies]
 ancestors-kernel = { version = "0.1.0", path = "../ancestors-kernel" }
 config = { version = "0.13.4", default-features = false, features = ["json", "json5_rs", "json5"] }
