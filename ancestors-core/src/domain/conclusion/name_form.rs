@@ -36,6 +36,4 @@ impl NameForm {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-}
+mod tests;
