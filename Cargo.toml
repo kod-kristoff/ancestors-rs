@@ -4,15 +4,11 @@ members = [
   "ancestors-core",
   "ancestors-infra-json",
   "ancestors-kernel",
-  "ancestors-r3bl",
-  "ancestors-realm",
-  "async-tui",
-  "gui",
   "tui",
   "repl",
-  "libs/*",
 ]
 
 [workspace.dependencies]
 gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }
-serde = { version = "1.0.193" }
+serde = { version = "^1.0.99" }
+serde_json = { version = "1" }
