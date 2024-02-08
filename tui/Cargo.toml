@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 ancestors-kernel = { version = "0.1.0", path = "../ancestors-kernel" }
-config = { version = "0.13.4", default-features = false, features = ["json", "json5_rs", "json5"] }
+config = { version = "0.14.0", default-features = false, features = ["json", "json5_rs", "json5"] }
 crossterm = "0.27.0"
 env_logger = "0.9.3"
 eyre = "0.6.8"
