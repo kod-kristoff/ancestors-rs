@@ -10,7 +10,6 @@ doctest = false
 [[bin]]
 doctest = false
 test = false
-path = "main.rs"
 name = "ancestors-tui"
 
 [dependencies]
