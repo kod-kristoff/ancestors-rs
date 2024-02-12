@@ -20,6 +20,6 @@ env_logger = "0.9.3"
 eyre = "0.6.8"
 json5 = "0.4.1"
 log = "0.4.17"
-ratatui = "0.24.0"
+ratatui = "0.26.1"
 serde = { workspace = true, features = ["derive"] }
 tui-input = "0.8.0"
