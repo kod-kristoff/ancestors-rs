@@ -78,7 +78,12 @@ impl Component for PersonEditorComponent {
             Row::new(cells).height(height as u16).bottom_margin(1)
         });
         let label = self.generate_label();
-        let table = Table::new(rows)
+        let widths = &[
+            // Constraint::Percentage(5),
+            Constraint::Percentage(35),
+            Constraint::Percentage(60),
+        ];
+        let table = Table::new(rows, widths)
             .header(header)
             .block(render_container(&label, in_focus))
             .highlight_style(
@@ -86,12 +91,7 @@ impl Component for PersonEditorComponent {
                     .bg(HIGHLIGHT_COLOR)
                     .fg(Color::Black)
                     .add_modifier(Modifier::BOLD),
-            )
-            .widths(&[
-                // Constraint::Percentage(5),
-                Constraint::Percentage(35),
-                Constraint::Percentage(60),
-            ]);
+            );
         f.render_stateful_widget(table, chunks[0], &mut self.table.state.clone());
         // todo!()
         Ok(())

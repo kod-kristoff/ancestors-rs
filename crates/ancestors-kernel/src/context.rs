@@ -1,7 +1,7 @@
-use ancestors_core::port::repository::SharedPersonRepository;
 use ancestors_infra_json::repository::json::mem_gedcomx_repository::{
     MemGedcomxPersonRepo, SharedMemStorage,
 };
+use persons::port::repository::SharedPersonRepository;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 use std::{fs, io};

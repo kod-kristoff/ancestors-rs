@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, RwLock},
 };
 
-use ancestors_core::{
+use persons::{
     domain::Person,
     port::repository::{PersonRepository, PersonRepositoryError},
     shared_kernel::PersonId,

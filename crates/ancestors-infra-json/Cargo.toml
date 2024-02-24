@@ -9,5 +9,5 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-persons = { version = "0.1.0", path = "../persons" }
+persons.workspace = true
 # gedcomx-model = { workspace = true }

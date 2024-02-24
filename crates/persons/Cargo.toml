@@ -10,7 +10,7 @@ doctest = false
 
 [dependencies]
 # gedcomx-model = { workspace = true }
-hashbrown = "0.13.2"
-oxiri = { version = "0.2.2", features = ["serde"] }
+hashbrown.workspace = true
+oxiri = { workspace = true, features = ["serde"] }
 serde = { workspace = true, features = ["derive"] }
-ulid = "1.0.0"
+ulid.workspace = true

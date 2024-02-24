@@ -5,10 +5,25 @@ members = [
   "crates/ancestors-infra-json",
   "crates/ancestors-kernel",
   "crates/ancestors-tui",
-  "crates/repl",
 ]
 
 [workspace.dependencies]
-gedcomx-model = { git = "https://github.com/kod-kristoff/gedcomx-rust" }
+# local crates
+ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
+ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
+persons = { version = "0.1.0", path = "./crates/persons" }
+
+# non-local crates
+config = { version = "0.14", default-features = false, features = ["json", "json5_rs", "json5"] }
+crossterm = "0.27"
+env_logger = "0.10"
+eyre = "0.6"
+hashbrown = "0.14"
+json5 = "0.4.1"
+log = "0.4.17"
+oxiri = { version = "0.2.2", features = ["serde"] }
+ratatui = "0.26"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
+tui-input = "0.8.0"
+ulid = "1.0.0"

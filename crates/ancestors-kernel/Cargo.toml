@@ -9,6 +9,6 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-persons = { version = "0.1.0", path = "../persons" }
-ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }
-serde_json = { workspace = true }
+persons.workspace = true
+ancestors-infra-json.workspace = true
+serde_json.workspace = true

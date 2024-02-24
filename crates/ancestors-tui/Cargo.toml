@@ -13,13 +13,15 @@ doctest = false
 test = false
 
 [dependencies]
-ancestors-kernel = { version = "0.1.0", path = "../ancestors-kernel" }
-config = { version = "0.13.4", default-features = false, features = ["json", "json5_rs", "json5"] }
-crossterm = "0.27.0"
-env_logger = "0.9.3"
-eyre = "0.6.8"
-json5 = "0.4.1"
-log = "0.4.17"
-ratatui = "0.24.0"
+config.workspace = true
+crossterm.workspace = true
+env_logger.workspace = true
+eyre.workspace = true
+json5.workspace = true
+log.workspace = true
+ratatui.workspace = true
 serde = { workspace = true, features = ["derive"] }
-tui-input = "0.8.0"
+tui-input.workspace = true
+
+# local deps
+ancestors-kernel.workspace = true
