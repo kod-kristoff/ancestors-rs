@@ -8,9 +8,9 @@ edition = "2021"
 doctest = false
 
 [[bin]]
+name = "ancestors-tui"
 doctest = false
 test = false
-name = "ancestors-tui"
 
 [dependencies]
 ancestors-kernel = { version = "0.1.0", path = "../ancestors-kernel" }

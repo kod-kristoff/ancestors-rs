@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-  "ancestors-core",
-  "ancestors-infra-json",
-  "ancestors-kernel",
-  "tui",
-  "repl",
+  "crates/ancestors-core",
+  "crates/ancestors-infra-json",
+  "crates/ancestors-kernel",
+  "crates/ancestors-tui",
+  "crates/repl",
 ]
 
 [workspace.dependencies]
