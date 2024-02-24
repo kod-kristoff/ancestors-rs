@@ -9,5 +9,5 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
+persons = { version = "0.1.0", path = "../persons" }
 # gedcomx-model = { workspace = true }

@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-  "crates/ancestors-core",
+  "crates/persons",
   "crates/ancestors-infra-json",
   "crates/ancestors-kernel",
   "crates/ancestors-tui",

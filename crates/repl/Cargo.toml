@@ -9,7 +9,7 @@ test = false
 doctest = false
 
 [dependencies]
-ancestors-core = { version = "0.1.0", path = "../ancestors-core" }
+persons = { version = "0.1.0", path = "../persons" }
 ancestors-infra-json = { version = "0.1.0", path = "../ancestors-infra-json" }
 clap = { version = "4.1.4", features = ["cargo"] }
 env_logger = "0.10.0"
