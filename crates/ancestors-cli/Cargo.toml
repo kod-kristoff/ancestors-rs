@@ -1,0 +1,16 @@
+[package]
+name = "ancestors-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# chrono.workspace = true
+prodash = { workspace = true, features = ["render-line", "render-line-crossterm", "signal-hook"] }
+env_logger.workspace = true
+miette = { workspace = true, features = ["fancy", "derive"] }
+xflags.workspace = true
+
+# local deps
+gen-scraper.workspace = true

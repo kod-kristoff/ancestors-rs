@@ -14,6 +14,15 @@ pub struct Person {
     extracted: bool,
 }
 
+impl Default for Person {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            names: Default::default(),
+            extracted: true,
+        }
+    }
+}
 impl Person {
     pub fn new(id: PersonId) -> Person {
         Self {
@@ -53,9 +62,8 @@ impl Person {
     //     self
     // }
 
-    pub fn name<N: Into<Name>>(mut self, name: N) -> Self {
+    pub fn name<N: Into<Name>>(&mut self, name: N) {
         self.add_name(name.into());
-        self
     }
 
     // pub fn fact(mut self, fact: Fact) -> Self {

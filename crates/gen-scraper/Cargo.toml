@@ -8,3 +8,11 @@ edition = "2021"
 doctest = false
 
 [dependencies]
+chrono.workspace = true
+miette.workspace = true
+scraper.workspace = true
+thiserror.workspace = true
+ureq = { workspace = true, features = ["json"] }
+
+# local deps
+gen-types.workspace = true

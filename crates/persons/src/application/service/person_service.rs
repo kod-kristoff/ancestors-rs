@@ -21,6 +21,11 @@ impl Default for AddPerson {
     }
 }
 
+impl AddPerson {
+    pub fn name<S: Into<String>>(&mut self, name: S) {
+        self.name = Some(name.into());
+    }
+}
 #[derive(Debug, Clone)]
 pub struct UpsertPerson {
     pub id: Option<PersonId>,

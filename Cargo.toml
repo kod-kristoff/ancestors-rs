@@ -8,22 +8,30 @@ members = [
 # local crates
 ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
 ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
+gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
 gen-types = { path = "./crates/gen-types" }
 persons = { version = "0.1.0", path = "./crates/persons" }
 id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
+chrono = { version = "0.4.34", features = ["serde"] }
 config = { version = "0.14", default-features = false, features = ["json", "json5_rs", "json5"] }
 crossterm = "0.27"
-env_logger = "0.10"
+env_logger = "0.11"
 eyre = "0.6"
 hashbrown = "0.14"
 json5 = "0.4.1"
 log = "0.4.17"
+miette = "7.1.0"
+prodash = "28.0.0"
 oxiri = { version = "0.2.2", features = ["serde"] }
 ratatui = "0.26"
+scraper = "0.18.1"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
+thiserror = "1.0.57"
 tui-input = "0.8.0"
 ulid = "1.0.0"
+ureq = { version = "2.9.6", features = ["json"] }
+xflags = "0.3.2"
