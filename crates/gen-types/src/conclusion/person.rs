@@ -1,5 +1,6 @@
-use crate::shared_kernel::IriParseError;
-use crate::shared_kernel::PersonId;
+use id_ulid::IdError;
+
+use crate::PersonId;
 
 use super::name::Name;
 
@@ -21,9 +22,9 @@ impl Person {
             extracted: true,
         }
     }
-    pub fn with_id<S: Into<String>>(id: S) -> Result<Person, IriParseError> {
+    pub fn with_id(id: &str) -> Result<Person, IdError> {
         let id: String = id.into();
-        let person_id = PersonId::try_from(id)?;
+        let person_id = id.parse()?;
         Ok(Self::new(person_id))
     }
 }

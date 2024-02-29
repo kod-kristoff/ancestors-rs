@@ -1,4 +1,4 @@
-use crate::domain::types::name_part_type::NamePartType;
+use crate::types::NamePartType;
 
 use super::name_form::NameForm;
 
