@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+  "crates/id-ulid",
   "crates/persons",
   "crates/ancestors-infra-json",
   "crates/ancestors-kernel",
@@ -12,6 +13,7 @@ members = [
 ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
 ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
 persons = { version = "0.1.0", path = "./crates/persons" }
+id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
 config = { version = "0.14", default-features = false, features = ["json", "json5_rs", "json5"] }
