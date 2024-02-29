@@ -8,3 +8,5 @@ edition = "2021"
 doctest = false
 
 [dependencies]
+# local deps
+id-ulid.workspace = true
