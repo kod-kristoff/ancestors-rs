@@ -1,17 +1,16 @@
 use id_ulid::IdError;
 
-use crate::PersonId;
+use crate::{Fact, PersonId};
 
 use super::name::Name;
 
-// pub use gedcomx_model::common;
-// pub use gedcomx_model::conclusion::Person;
-// pub use gedcomx_model::GedcomX;
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct Person {
     id: PersonId,
     names: Vec<Name>,
     extracted: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    facts: Vec<Fact>,
 }
 
 impl Default for Person {
@@ -20,6 +19,7 @@ impl Default for Person {
             id: Default::default(),
             names: Default::default(),
             extracted: true,
+            facts: Default::default(),
         }
     }
 }
@@ -27,8 +27,7 @@ impl Person {
     pub fn new(id: PersonId) -> Person {
         Self {
             id,
-            names: Default::default(),
-            extracted: true,
+            ..Default::default()
         }
     }
     pub fn with_id(id: &str) -> Result<Person, IdError> {
@@ -66,10 +65,9 @@ impl Person {
         self.add_name(name.into());
     }
 
-    // pub fn fact(mut self, fact: Fact) -> Self {
-    //     self.add_fact(fact);
-    //     self
-    // }
+    pub fn fact(&mut self, fact: Fact) {
+        self.add_fact(fact);
+    }
 }
 
 impl Person {
@@ -87,5 +85,8 @@ impl Person {
     }
     pub fn set_extracted(&mut self, yes: bool) {
         self.extracted = yes;
+    }
+    pub fn add_fact(&mut self, fact: Fact) {
+        self.facts.push(fact);
     }
 }
