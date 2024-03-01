@@ -1,7 +1,11 @@
 use std::fs;
 
 use chrono::NaiveDate;
-use gen_types::conclusion::Person;
+use gen_types::{
+    value_objects::{Fact, FactType},
+    Batch, Household, Person,
+};
+// use gen_types::{conclusion::Person, Batch, Fact, FactType, Family};
 // use miette::IntoDiagnostic;
 use scraper::{Html, Selector};
 
@@ -9,16 +13,38 @@ use crate::ProcessError;
 
 // use persons::application::service::AddPerson;
 
-pub fn process(src: &str) -> Result<(), ProcessError> {
+pub fn process(batch: &mut Batch, url: &str, src: &str) -> Result<(), ProcessError> {
     let html = Html::parse_document(src);
     // dbg!(&html);
+
+    let ident = parse_ident(url);
+    dbg!(&ident);
+    let riksarkivet_ns = Some("http://riksarkivet.se");
+    let curr_person_opt: Option<&mut Person> = batch.persons_mut().iter_mut().find(|p| {
+        p.identifiers()
+            .iter()
+            .any(|i| i.namespace() == riksarkivet_ns && i.id() == ident)
+    });
+    dbg!(&curr_person_opt);
+    if let Some(person) = curr_person_opt {
+        let mut curr_household = Household::default();
+        extract_person(person, &mut curr_household, &html)?;
+    } else {
+        let mut new_person = Person::default();
+        let mut curr_household = Household::default();
+        extract_person(&mut new_person, &mut curr_household, &html)?;
+    }
+    Ok(())
+}
+fn extract_person(
+    new_person: &mut Person,
+    curr_household: &mut Household,
+    html: &Html,
+) -> Result<(), ProcessError> {
     let selector = Selector::parse("article.hitRow").unwrap();
     let post_header_selector = Selector::parse("div.post_header").unwrap();
     let post_title_selector = Selector::parse("h1.post_title").unwrap();
     let post_type_selector = Selector::parse("div.post_type").unwrap();
-
-    let mut new_person = Person::default();
-
     for post in html.select(&selector) {
         // dbg!(&post.html());
         let (post_title, post_type, post_year) = {
@@ -77,13 +103,14 @@ pub fn process(src: &str) -> Result<(), ProcessError> {
                     dbg!(&div_faltdata.html());
                     dbg!(&texts);
                     if field == "Namn" {
-                        new_person.name(texts[0]);
+                        new_person.add_name(texts[0].into());
                     } else if field == "Hemförsamling" {
-                        // new_person.fact()
+                        curr_household.add_fact(Fact::new(FactType::Living));
                     } else {
                         return Err(ProcessError::UnknownField(field.into()));
                     }
                     dbg!(&new_person);
+                    dbg!(&curr_household);
                 }
             } else {
                 continue;
@@ -92,4 +119,18 @@ pub fn process(src: &str) -> Result<(), ProcessError> {
         }
     }
     Err(ProcessError::UnknownError("return something".into()))
+}
+
+fn parse_ident(url: &str) -> Option<&str> {
+    let key_values = url.split('?').nth(1)?;
+    let key_values = key_values.split('#').nth(0)?;
+    for key_value in key_values.split('&') {
+        let mut key_value_iter = key_value.split('=');
+        if let Some(key) = key_value_iter.next() {
+            if key == "postid" {
+                return key_value_iter.next();
+            }
+        }
+    }
+    None
 }

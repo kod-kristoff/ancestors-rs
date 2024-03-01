@@ -2,6 +2,8 @@ mod process;
 
 use std::fs;
 
+use gen_types::Batch;
+
 use crate::ScrapeError;
 
 pub fn scrape(
@@ -15,6 +17,8 @@ pub fn scrape(
     // println!("{}", body);
     // fs::write("output.html", &body).into_diagnostic()?;
     let body = fs::read_to_string("output.html")?;
-    process::process(&body)?;
+    let mut batch = Batch::new();
+    process::process(&mut batch, &url, &body)?;
+    dbg!(&batch);
     Ok(())
 }
