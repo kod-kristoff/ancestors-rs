@@ -1,6 +1,8 @@
-use crate::types::NamePartType;
+mod name_form;
+mod name_part_type;
 
-use super::name_form::NameForm;
+pub use name_form::NameForm;
+pub use name_part_type::NamePartType;
 
 /// A name conclusion
 #[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]

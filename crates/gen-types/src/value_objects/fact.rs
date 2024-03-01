@@ -1,6 +1,6 @@
 mod fact_type;
 
-use crate::Date;
+use crate::value_objects::Date;
 use crate::PlaceReference;
 pub use fact_type::FactType;
 

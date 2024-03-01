@@ -1,13 +1,14 @@
-pub mod conclusion;
-mod date;
-mod fact;
-mod family;
-mod person_id;
-mod place_reference;
-pub mod types;
+mod batch;
+pub mod entities;
+mod error;
+pub mod shared;
+pub mod value_objects;
 
-pub use date::Date;
-pub use fact::{Fact, FactType};
-pub use family::Family;
-pub use person_id::PersonId;
-pub use place_reference::PlaceReference;
+pub use batch::Batch;
+pub use entities::{
+    PlaceReference, {Agent, AgentId}, {Document, DocumentId, DocumentReference},
+    {Family, FamilyId}, {Household, HouseholdId}, {Person, PersonId, PersonReference},
+    {Relationship, RelationshipId, RelationshipReference, RelationshipType},
+    {SourceCitation, SourceDescription, SourceId, SourceReference},
+};
+pub use error::{Error, Result};
