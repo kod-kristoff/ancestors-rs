@@ -15,6 +15,6 @@ clap = { version = "4.1.4", features = ["cargo"] }
 env_logger = "0.10.0"
 eyre = "0.6.8"
 log = "0.4.17"
-rustyline = "10.1.1"
+rustyline = "14.0.0"
 serde_json = { workspace = true }
 shlex = "1.1.0"
