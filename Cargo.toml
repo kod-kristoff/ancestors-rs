@@ -32,6 +32,6 @@ serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
 thiserror = "1.0.57"
 tui-input = "0.8.0"
-ulid = "1.0.0"
+ulid = "1.1.2"
 ureq = { version = "2.9.6", features = ["json"] }
 xflags = "0.3.2"
