@@ -80,7 +80,7 @@ impl Agent {
 // }
 impl From<&Agent> for AgentReference {
     fn from(value: &Agent) -> Self {
-        Self::new(value.id.clone())
+        Self::new(value.id)
     }
 }
 

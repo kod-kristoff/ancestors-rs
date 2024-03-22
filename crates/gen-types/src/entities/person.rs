@@ -3,13 +3,11 @@ mod person_id;
 pub use person_id::PersonId;
 pub type PersonReference = IdReference<PersonId>;
 
-use id_ulid::IdError;
-
 use super::shared::Subject;
 use crate::{
     shared::IdReference,
     value_objects::{Fact, Gender, Identifier, Name},
-    DocumentReference, SourceReference,
+    DocumentReference, Error, SourceReference,
 };
 
 #[derive(Debug, Default, Clone, serde::Deserialize, serde::Serialize)]
@@ -38,10 +36,13 @@ impl Person {
             ..Default::default()
         }
     }
-    pub fn with_id(id: &str) -> Result<Person, IdError> {
-        let id: String = id.into();
-        let person_id = id.parse()?;
-        Ok(Self::new(person_id))
+    pub fn with_id<I>(id: I) -> Result<Person, Error>
+    where
+        I: TryInto<PersonId>,
+        Error: From<<I as TryInto<PersonId>>::Error>,
+    {
+        let id: PersonId = id.try_into()?;
+        Ok(Self::new(id))
     }
 }
 
@@ -98,10 +99,10 @@ impl Person {
         &self.facts
     }
     pub fn evidences(&self) -> &[PersonReference] {
-        &self.subject.evidences()
+        self.subject.evidences()
     }
     pub fn identifiers(&self) -> &[Identifier] {
-        &self.subject.identifiers()
+        self.subject.identifiers()
     }
     pub fn add_name(&mut self, name: Name) {
         self.names.push(name);
@@ -129,6 +130,6 @@ impl Person {
 
 impl From<&Person> for PersonReference {
     fn from(value: &Person) -> Self {
-        Self::new(value.id.clone())
+        Self::new(value.id)
     }
 }

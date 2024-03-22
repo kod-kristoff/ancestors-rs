@@ -1,12 +1,11 @@
+use gen_types::{Person, PersonId};
 use hashbrown::HashMap;
 use std::sync::{Arc, RwLock};
 
-use crate::domain::Person;
 use crate::port::repository::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
-use crate::shared_kernel::{IriRef, PersonId};
 
 pub struct InMemoryPersonRepo {
-    storage: Arc<RwLock<HashMap<IriRef, Person>>>,
+    storage: Arc<RwLock<HashMap<PersonId, Person>>>,
 }
 
 impl InMemoryPersonRepo {
@@ -22,14 +21,14 @@ impl InMemoryPersonRepo {
 
 impl PersonRepository for InMemoryPersonRepo {
     fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
-        Ok(self.storage.read().expect("").get(&id.value).cloned())
+        Ok(self.storage.read().expect("").get(id).cloned())
     }
 
     fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
         self.storage
             .write()
             .unwrap()
-            .insert(person.id().value.clone(), person.clone());
+            .insert(person.id().clone(), person.clone());
         Ok(())
     }
 }

@@ -8,7 +8,7 @@ fn main() {
 }
 fn try_main() -> miette::Result<()> {
     let flags = flags::AncestorsCli::from_env_or_exit();
-
+    dbg!(&flags);
     let verbose = flags.verbose;
     let trace = flags.trace;
 

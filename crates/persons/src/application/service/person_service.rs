@@ -1,6 +1,6 @@
-use crate::domain::Person;
+use gen_types::{Person, PersonId};
+
 use crate::port::repository::SharedPersonRepository;
-use crate::shared_kernel::PersonId;
 
 use super::UseCaseResult;
 
@@ -14,7 +14,7 @@ pub struct AddPerson {
 impl Default for AddPerson {
     fn default() -> Self {
         Self {
-            id: PersonId::gen(),
+            id: PersonId::default(),
             name: None,
             extracted: true,
         }
@@ -59,7 +59,7 @@ impl PersonService {
         if let Some(name) = &cmd.name {
             person = person.name(name.as_str());
         }
-        person.set_extracted(cmd.extracted);
+        // person.set_extracted(cmd.extracted);
         self.repo.save(person).unwrap();
         Ok(())
     }

@@ -3,7 +3,7 @@ use crate::{
     Agent, Document, Person, Relationship, SourceDescription,
 };
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(rename = "batch", rename_all = "camelCase")]
 pub struct Batch {
     attribution: Option<Attribution>,
@@ -16,14 +16,7 @@ pub struct Batch {
 
 impl Batch {
     pub fn new() -> Self {
-        Self {
-            attribution: None,
-            persons: Vec::new(),
-            relationships: Vec::new(),
-            source_descriptions: Vec::new(),
-            agents: Vec::new(),
-            documents: Vec::new(),
-        }
+        Self::default()
     }
 }
 

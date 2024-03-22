@@ -1,7 +1,6 @@
 use std::{error, fmt};
 
-use crate::domain::Person;
-use crate::shared_kernel::PersonId;
+use gen_types::{Person, PersonId};
 
 pub trait PersonRepository {
     fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError>;

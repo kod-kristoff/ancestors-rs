@@ -49,7 +49,7 @@ pub mod pretty {
             use crate::shared::{self, STANDARD_RANGE};
             let progress = shared::progress_tree(trace);
             let sub_progress = progress.add_child(name);
-            // init_tracing(trace, false, &progress)?;
+            init_tracing(trace, false, &progress)?;
 
             let handle = shared::setup_line_renderer_range(
                 &progress,
@@ -59,21 +59,55 @@ pub mod pretty {
             let mut out = Vec::<u8>::new();
             let mut err = Vec::<u8>::new();
 
-            let res = 
-                // gix::trace::coarse!("run").into_scope(|| {
+            let res = anc_trace::coarse!("run").into_scope(|| {
                 run(
                     progress::DoOrDiscard::from(Some(sub_progress)),
                     &mut out,
                     &mut err,
                 )
-            // })
-            ;
+            });
 
             handle.shutdown_and_wait();
             std::io::Write::write_all(&mut stdout(), &out).into_diagnostic()?;
             std::io::Write::write_all(&mut stderr(), &err).into_diagnostic()?;
             res.into_diagnostic()
         }
+    }
+
+    fn init_tracing(
+        enable: bool,
+        reverse_lines: bool,
+        progress: &progress::prodash::tree::Root,
+    ) -> miette::Result<()> {
+        if enable {
+            let processor = tracing_forest::Printer::new().formatter({
+                let progress = std::sync::Mutex::new(progress.add_child("tracing"));
+                move |tree: &tracing_forest::tree::Tree| -> Result<String, std::fmt::Error> {
+                    use crate::progress::Progress;
+                    use tracing_forest::Formatter;
+                    let progress = &mut progress.lock().unwrap();
+                    let tree = tracing_forest::printer::Pretty.fmt(tree)?;
+                    if reverse_lines {
+                        for line in tree.lines().rev() {
+                            progress.info(line.into());
+                        }
+                    } else {
+                        for line in tree.lines() {
+                            progress.info(line.into());
+                        }
+                    }
+                    Ok(String::new())
+                }
+            });
+            use tracing_subscriber::layer::SubscriberExt;
+            let subscriber = tracing_subscriber::Registry::default()
+                .with(tracing_forest::ForestLayer::from(processor));
+            tracing::subscriber::set_global_default(subscriber).into_diagnostic()?;
+        } else {
+            tracing::subscriber::set_global_default(tracing_subscriber::Registry::default())
+                .into_diagnostic()?;
+        }
+        Ok(())
     }
 }
 

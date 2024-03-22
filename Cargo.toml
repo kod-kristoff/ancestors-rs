@@ -1,11 +1,10 @@
 [workspace]
 resolver = "2"
-members = [
-  "crates/*",
-]
+members = ["crates/*"]
 
 [workspace.dependencies]
 # local crates
+anc-trace = { path = "./crates/anc-trace" }
 ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
 ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
 gen-scraper = { path = "./crates/gen-scraper" }
@@ -16,7 +15,11 @@ id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
 chrono = { version = "0.4.34", features = ["serde"] }
-config = { version = "0.14", default-features = false, features = ["json", "json5_rs", "json5"] }
+config = { version = "0.14", default-features = false, features = [
+  "json",
+  "json5_rs",
+  "json5",
+] }
 crossterm = "0.27"
 env_logger = "0.11"
 eyre = "0.6"
@@ -31,6 +34,7 @@ scraper = "0.18.1"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
 thiserror = "1.0.57"
+tracing = "0.1.40"
 tui-input = "0.8.0"
 ulid = "1.0.0"
 ureq = { version = "2.9.6", features = ["json"] }

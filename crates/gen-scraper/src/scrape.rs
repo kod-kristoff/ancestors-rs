@@ -7,7 +7,7 @@ use gen_types::Batch;
 use crate::ScrapeError;
 
 pub fn scrape(
-    out: &mut dyn std::io::Write,
+    _out: &mut dyn std::io::Write,
     err: &mut dyn std::io::Write,
     start_urls: Vec<String>,
 ) -> Result<(), ScrapeError> {
@@ -18,7 +18,7 @@ pub fn scrape(
     // fs::write("output.html", &body).into_diagnostic()?;
     let body = fs::read_to_string("output.html")?;
     let mut batch = Batch::new();
-    process::process(&mut batch, &url, &body)?;
+    process::process(&mut batch, url, &body)?;
     dbg!(&batch);
     Ok(())
 }

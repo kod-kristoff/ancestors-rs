@@ -50,7 +50,7 @@ impl Document {
 
 impl From<&Document> for DocumentReference {
     fn from(doc: &Document) -> Self {
-        DocumentReference::new(doc.id.clone())
+        DocumentReference::new(doc.id)
     }
 }
 

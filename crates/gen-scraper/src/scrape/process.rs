@@ -1,6 +1,6 @@
-use std::fs;
 
-use chrono::NaiveDate;
+
+
 use gen_types::{
     value_objects::{Fact, FactType},
     Batch, Household, Person,
@@ -64,10 +64,8 @@ fn extract_person(
                     .next()
                     .unwrap();
                 let post_date = post_type
-                    .split(" ")
-                    .map(|s| s.trim())
-                    .filter(|s| s.chars().all(|c| c.is_digit(10)))
-                    .next()
+                    .split(' ')
+                    .map(|s| s.trim()).find(|s| s.chars().all(|c| c.is_ascii_digit()))
                     .unwrap();
                 // let year: i32 = year_str.parse().unwrap();
                 // let post_date = NaiveDate::from_ymd_opt(year, 12, 31).unwrap();
@@ -123,7 +121,7 @@ fn extract_person(
 
 fn parse_ident(url: &str) -> Option<&str> {
     let key_values = url.split('?').nth(1)?;
-    let key_values = key_values.split('#').nth(0)?;
+    let key_values = key_values.split('#').next()?;
     for key_value in key_values.split('&') {
         let mut key_value_iter = key_value.split('=');
         if let Some(key) = key_value_iter.next() {

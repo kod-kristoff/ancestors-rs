@@ -7,10 +7,18 @@ edition = "2021"
 
 [dependencies]
 # chrono.workspace = true
-prodash = { workspace = true, features = ["render-line", "render-line-crossterm", "signal-hook"] }
+prodash = { workspace = true, features = [
+    "render-line",
+    "render-line-crossterm",
+    "signal-hook",
+] }
 env_logger.workspace = true
 miette = { workspace = true, features = ["fancy", "derive"] }
+tracing.workspace = true
 xflags.workspace = true
 
 # local deps
 gen-scraper.workspace = true
+anc-trace.workspace = true
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing-forest = "0.1.6"

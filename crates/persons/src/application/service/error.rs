@@ -6,6 +6,7 @@ use crate::shared_kernel;
 pub enum UseCaseError {
     GedcomxError(String),
     IdParseError(shared_kernel::IriParseError),
+    IdError(gen_types::Error),
 }
 
 // impl From<gedcomx_model::Error> for UseCaseError {
