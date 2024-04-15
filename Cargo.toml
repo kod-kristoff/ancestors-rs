@@ -14,7 +14,7 @@ persons = { version = "0.1.0", path = "./crates/persons" }
 id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
-chrono = { version = "0.4.34", features = ["serde"] }
+chrono = { version = "0.4.38", features = ["serde"] }
 config = { version = "0.14", default-features = false, features = [
   "json",
   "json5_rs",
