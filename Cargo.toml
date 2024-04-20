@@ -33,7 +33,7 @@ ratatui = "0.26"
 scraper = "0.18.1"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
-thiserror = "1.0.57"
+thiserror = "1.0.59"
 tracing = "0.1.40"
 tui-input = "0.8.0"
 ulid = "1.0.0"
