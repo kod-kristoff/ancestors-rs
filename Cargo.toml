@@ -37,5 +37,5 @@ thiserror = "1.0.57"
 tracing = "0.1.40"
 tui-input = "0.8.0"
 ulid = "1.0.0"
-ureq = { version = "2.9.6", features = ["json"] }
+ureq = { version = "2.9.7", features = ["json"] }
 xflags = "0.3.2"
