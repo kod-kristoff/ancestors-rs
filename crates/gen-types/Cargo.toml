@@ -14,7 +14,7 @@ serde = { workspace = true, features = ["derive"] }
 # local deps
 id-ulid.workspace = true
 oxiri.workspace = true
-serde_with = { version = "3.6.1", features = ["chrono"] }
+serde_with = { version = "3.8.1", features = ["chrono"] }
 
 [dev-dependencies]
 eyre.workspace = true
