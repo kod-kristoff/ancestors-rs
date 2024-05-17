@@ -1,6 +1,7 @@
 use gen_types::{Person, PersonId};
 
-use crate::port::repository::SharedPersonRepository;
+
+use crate::repositories::SharedPersonRepository;
 
 use super::UseCaseResult;
 
@@ -55,7 +56,7 @@ impl PersonService {
 
 impl PersonService {
     pub fn add(&self, cmd: &AddPerson) -> UseCaseResult<()> {
-        let mut person = Person::with_id(cmd.id.clone())?;
+        let mut person = Person::new(cmd.id);
         if let Some(name) = &cmd.name {
             person = person.name(name.as_str());
         }
@@ -65,7 +66,7 @@ impl PersonService {
     }
 
     pub fn edit(&self, cmd: &EditPerson) -> UseCaseResult<()> {
-        let mut person = Person::with_id(cmd.id.clone())?;
+        let mut person = Person::new(cmd.id);
         // if let Some(name) = &cmd.name {
         //     person = person.name(name.as_str());
         // }

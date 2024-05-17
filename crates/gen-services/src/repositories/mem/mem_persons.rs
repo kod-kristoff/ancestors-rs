@@ -2,7 +2,7 @@ use gen_types::{Person, PersonId};
 use hashbrown::HashMap;
 use std::sync::{Arc, RwLock};
 
-use crate::port::repository::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
+use crate::repositories::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
 
 pub struct InMemoryPersonRepo {
     storage: Arc<RwLock<HashMap<PersonId, Person>>>,

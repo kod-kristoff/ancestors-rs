@@ -1,6 +1,6 @@
 use super::*;
 
-use crate::infrastructure::repository::in_memory::InMemoryPersonRepo;
+use crate::repositories::mem::InMemoryPersonRepo;
 #[test]
 fn adding_person_succeeds() {
     let repo = InMemoryPersonRepo::arc_new();
@@ -12,7 +12,7 @@ fn adding_person_succeeds() {
     let person = repo.get(&cmd.id).unwrap();
 }
 #[test]
-fn editing_person_succeds() {
+fn editing_person_succeeds() {
     let repo = InMemoryPersonRepo::arc_new();
     let service = PersonService::new(repo.clone());
 

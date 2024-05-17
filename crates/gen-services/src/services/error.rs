@@ -1,11 +1,10 @@
 use std::{error::Error, fmt::Display};
 
-use crate::shared_kernel;
 
 #[derive(Debug)]
 pub enum UseCaseError {
     GedcomxError(String),
-    IdParseError(shared_kernel::IriParseError),
+    IdParseError(gen_types::shared::IriParseError),
     IdError(gen_types::Error),
 }
 
@@ -15,8 +14,8 @@ pub enum UseCaseError {
 //     }
 // }
 
-impl From<shared_kernel::IriParseError> for UseCaseError {
-    fn from(value: shared_kernel::IriParseError) -> Self {
+impl From<gen_types::shared::IriParseError> for UseCaseError {
+    fn from(value: gen_types::shared::IriParseError) -> Self {
         Self::IdParseError(value)
     }
 }
@@ -25,6 +24,7 @@ impl Display for UseCaseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::GedcomxError(err) => write!(f, "gedcomx model error: {}", err),
+            Self::IdError(err) => f.write_fmt(format_args!("failed to parse id '{}'", err)),
             Self::IdParseError(err) => f.write_fmt(format_args!("failed to parse id '{}'", err)),
         }
     }
@@ -36,5 +36,11 @@ impl Error for UseCaseError {
             Self::IdParseError(err) => Some(err),
             _ => None,
         }
+    }
+}
+
+impl From<gen_types::Error> for UseCaseError {
+    fn from(value: gen_types::Error) -> Self {
+        Self::IdError(value)
     }
 }
