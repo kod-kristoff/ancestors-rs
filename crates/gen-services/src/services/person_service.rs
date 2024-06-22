@@ -1,6 +1,5 @@
 use gen_types::{Person, PersonId};
 
-
 use crate::repositories::SharedPersonRepository;
 
 use super::UseCaseResult;

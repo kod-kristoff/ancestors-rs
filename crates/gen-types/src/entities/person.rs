@@ -36,7 +36,7 @@ impl Person {
             ..Default::default()
         }
     }
-    
+
     pub fn with_id<I>(id: I) -> Result<Person, Error>
     where
         I: TryInto<PersonId>,

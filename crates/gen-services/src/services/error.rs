@@ -1,6 +1,5 @@
 use std::{error::Error, fmt::Display};
 
-
 #[derive(Debug)]
 pub enum UseCaseError {
     GedcomxError(String),
