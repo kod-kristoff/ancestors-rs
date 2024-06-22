@@ -75,7 +75,7 @@ impl Component for MenuComponent {
         area: ratatui::prelude::Rect,
         in_focus: bool,
     ) -> eyre::Result<()> {
-        let menu_titles = vec!["Ancestors", "Home", "Persons", "Quit"];
+        let menu_titles = &["Ancestors", "Home", "Persons", "Quit"];
 
         let menu: Vec<Line> = menu_titles
             .iter()
