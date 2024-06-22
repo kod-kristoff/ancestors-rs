@@ -9,6 +9,10 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-persons.workspace = true
+# local deps
+gen-services.workspace = true
+gen-types.workspace = true
 ancestors-infra-json.workspace = true
+
+# external deps
 serde_json.workspace = true

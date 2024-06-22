@@ -1,8 +1,7 @@
+use ancestors_kernel::gen_services::services::UpsertPerson;
 use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{Cell, Row, Table};
-
-use ancestors_kernel::core::application::service::UpsertPerson;
 
 use crate::app::components::shared::container::render_container;
 use crate::config::Config;

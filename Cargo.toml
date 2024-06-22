@@ -10,7 +10,6 @@ ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
 gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
 gen-types = { path = "./crates/gen-types" }
-persons = { version = "0.1.0", path = "./crates/persons" }
 id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates

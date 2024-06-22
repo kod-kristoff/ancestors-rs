@@ -1,24 +1,15 @@
 use ancestors_infra_json::repository::json::mem_gedcomx_repository::{
     MemGedcomxPersonRepo, SharedMemStorage,
 };
-use persons::port::repository::SharedPersonRepository;
+use gen_services::repositories::SharedPersonRepository;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 use std::{fs, io};
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct AppContext {
     db: SharedMemStorage,
     db_path: Option<PathBuf>,
-}
-
-impl Default for AppContext {
-    fn default() -> Self {
-        Self {
-            db: SharedMemStorage::default(),
-            db_path: None,
-        }
-    }
 }
 
 impl AppContext {

@@ -77,7 +77,7 @@ impl Component for MenuComponent {
     ) -> eyre::Result<()> {
         let menu_titles = vec!["Ancestors", "Home", "Persons", "Quit"];
 
-        let menu = menu_titles
+        let menu: Vec<Line> = menu_titles
             .iter()
             .enumerate()
             .map(|(index, t)| {
