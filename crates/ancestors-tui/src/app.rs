@@ -1,3 +1,5 @@
+#![allow(clippy::single_match)]
+#![allow(clippy::match_single_binding)]
 pub mod components;
 
 use ancestors_kernel::context::AppContext;
@@ -24,6 +26,7 @@ pub struct App {
     pub ctx: AppContext,
 }
 
+#[allow(dead_code)]
 pub struct AppComponent {
     config: Config,
     menu: MenuComponent,
@@ -62,7 +65,7 @@ impl App {
         self.should_quit = true;
     }
 
-    pub fn load_file(&mut self, filename: String) {
+    pub fn load_file(&mut self, _filename: String) {
         // self.current_screen = CurrentScreen::Main;
     }
     pub fn increment_counter(&mut self) {
@@ -185,7 +188,7 @@ impl AppComponent {
         Ok(None)
     }
 
-    fn move_focus(&mut self, event: InputEvent) -> eyre::Result<Option<Action>> {
+    fn move_focus(&mut self, _event: InputEvent) -> eyre::Result<Option<Action>> {
         match self.mode {
             // Mode::Menu => {
             //     if matches!(event, InputEvent::Key(key) if key.code == KeyCode::Esc) {

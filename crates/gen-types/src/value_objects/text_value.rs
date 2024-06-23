@@ -11,7 +11,7 @@ impl TextValue {
     }
 
     pub fn lang(&self) -> Option<&str> {
-        self.lang.as_ref().map(|s| s.as_str())
+        self.lang.as_deref()
     }
 }
 

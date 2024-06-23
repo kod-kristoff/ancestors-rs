@@ -18,3 +18,6 @@ serde_with = { version = "3.6.1", features = ["chrono"] }
 
 [dev-dependencies]
 eyre.workspace = true
+
+[lints]
+workspace = true

@@ -1,5 +1,5 @@
 #[serde_with::skip_serializing_none]
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct SourceCitation {
     value: String,
     lang: Option<String>,
@@ -7,10 +7,7 @@ pub struct SourceCitation {
 
 impl SourceCitation {
     pub fn new() -> Self {
-        Self {
-            value: String::new(),
-            lang: None,
-        }
+        Self::default()
     }
 }
 

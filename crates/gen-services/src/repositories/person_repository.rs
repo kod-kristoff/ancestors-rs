@@ -22,8 +22,6 @@ impl fmt::Display for PersonRepositoryError {
 
 impl error::Error for PersonRepositoryError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match self {
-            _ => None,
-        }
+        None
     }
 }

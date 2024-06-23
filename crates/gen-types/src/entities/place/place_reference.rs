@@ -1,14 +1,12 @@
 /// A place conclusion
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct PlaceReference {
     original: String,
 }
 
 impl PlaceReference {
     pub fn new() -> Self {
-        Self {
-            original: String::new(),
-        }
+        Self::default()
     }
 }
 

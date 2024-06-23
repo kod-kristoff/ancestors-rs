@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, LocalResult, Utc};
 use serde::{Deserialize, Deserializer, Serializer};
 
 use crate::{
@@ -53,7 +53,12 @@ impl<'de> serde::de::Visitor<'de> for OptionalDateTimeVisitor {
         D: Deserializer<'de>,
     {
         use chrono::TimeZone;
-        Ok(Some(Utc.timestamp_millis(i64::deserialize(deserializer)?)))
+        match Utc.timestamp_millis_opt(i64::deserialize(deserializer)?) {
+            LocalResult::Single(dt) => Ok(Some(dt)),
+            LocalResult::None => todo!("handle error"),
+            LocalResult::Ambiguous(_dt1, _dt2) => todo!("handle ambiguous"),
+        }
+        // Ok(Some(Utc.timestamp_millis(i64::deserialize(deserializer)?)))
     }
 }
 
@@ -162,6 +167,6 @@ impl SourceDescription {
 
 impl From<&SourceDescription> for SourceReference {
     fn from(source: &SourceDescription) -> Self {
-        Self::new(source.id.clone()) //, source.id.clone().into_inner())
+        Self::new(source.id) //, source.id.clone().into_inner())
     }
 }

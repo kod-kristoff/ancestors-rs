@@ -1,14 +1,12 @@
 /// A name conclusion
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct Date {
     original: String,
 }
 
 impl Date {
     pub fn new() -> Self {
-        Self {
-            original: String::new(),
-        }
+        Self::default()
     }
 }
 

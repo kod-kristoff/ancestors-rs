@@ -65,7 +65,7 @@ impl PersonService {
     }
 
     pub fn edit(&self, cmd: &EditPerson) -> UseCaseResult<()> {
-        let mut person = Person::new(cmd.id);
+        let person = Person::new(cmd.id);
         // if let Some(name) = &cmd.name {
         //     person = person.name(name.as_str());
         // }
@@ -85,7 +85,7 @@ pub struct EditPerson {
 impl From<Person> for EditPerson {
     fn from(value: Person) -> Self {
         Self {
-            id: value.id().clone(),
+            id: *value.id(),
             // name: None,
             // extracted: true,
         }

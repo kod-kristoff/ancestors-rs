@@ -51,7 +51,7 @@ impl Component for PersonEditorComponent {
         area: ratatui::prelude::Rect,
         in_focus: bool,
     ) -> eyre::Result<()> {
-        let mut chunks = Layout::default()
+        let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Percentage(100), Constraint::Percentage(0)])
             .split(area);

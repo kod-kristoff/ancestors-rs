@@ -43,8 +43,7 @@ pub fn run_app(t: &mut Tui, app: &mut dyn Component) -> eyre::Result<()> {
             Event::Tick => Some(Action::Tick),
             Event::Input(event) => match app.handle_event(event) {
                 Ok(action) => {
-                    if !action.is_some() {
-                        todo!("what to do here?");
+                    if action.is_none() {
                         Some(Action::Quit)
                     } else {
                         action
