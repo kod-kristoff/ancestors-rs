@@ -25,3 +25,6 @@ tui-input.workspace = true
 
 # local deps
 ancestors-kernel.workspace = true
+
+[lints]
+workspace = true

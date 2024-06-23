@@ -1,6 +1,3 @@
-
-
-
 use gen_types::{
     value_objects::{Fact, FactType},
     Batch, Household, Person,
@@ -65,7 +62,8 @@ fn extract_person(
                     .unwrap();
                 let post_date = post_type
                     .split(' ')
-                    .map(|s| s.trim()).find(|s| s.chars().all(|c| c.is_ascii_digit()))
+                    .map(|s| s.trim())
+                    .find(|s| s.chars().all(|c| c.is_ascii_digit()))
                     .unwrap();
                 // let year: i32 = year_str.parse().unwrap();
                 // let post_date = NaiveDate::from_ymd_opt(year, 12, 31).unwrap();

@@ -10,7 +10,7 @@ use eyre::Result;
 pub use ratatui::Frame;
 pub type CrosstermTerminal = ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stderr>>;
 
-use crate::{app::App, event::EventHandler};
+use crate::event::EventHandler;
 
 /// Representation of a terminal user interface.
 ///

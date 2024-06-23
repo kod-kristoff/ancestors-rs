@@ -1,5 +1,4 @@
 //! Various `prodash` types along with various utilities for comfort.
-use std::io;
 
 // #[cfg(feature = "progress-unit-bytes")]
 // pub use bytesize;

@@ -10,7 +10,6 @@ ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
 gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
 gen-types = { path = "./crates/gen-types" }
-persons = { version = "0.1.0", path = "./crates/persons" }
 id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
@@ -39,3 +38,10 @@ tui-input = "0.8.0"
 ulid = "1.0.0"
 ureq = { version = "2.9.6", features = ["json"] }
 xflags = "0.3.2"
+
+[workspace.lints.rust]
+dead_code = "allow"
+unused_variables = "allow"
+
+[workspace.lints.clippy]
+match_single_binding = "allow"

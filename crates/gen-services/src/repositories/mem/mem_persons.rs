@@ -2,8 +2,9 @@ use gen_types::{Person, PersonId};
 use hashbrown::HashMap;
 use std::sync::{Arc, RwLock};
 
-use crate::port::repository::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
+use crate::repositories::{PersonRepository, PersonRepositoryError, SharedPersonRepository};
 
+#[derive(Default)]
 pub struct InMemoryPersonRepo {
     storage: Arc<RwLock<HashMap<PersonId, Person>>>,
 }
@@ -28,7 +29,7 @@ impl PersonRepository for InMemoryPersonRepo {
         self.storage
             .write()
             .unwrap()
-            .insert(person.id().clone(), person.clone());
+            .insert(*person.id(), person.clone());
         Ok(())
     }
 }

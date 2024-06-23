@@ -1,4 +1,3 @@
-use crossterm::event::KeyCode;
 use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
@@ -6,7 +5,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::{action::Action, config::Config, event::EventState, mode::Mode};
+use crate::{action::Action, config::Config, mode::Mode};
 
 use super::shared::{constants::HIGHLIGHT_COLOR, container::render_container};
 use crate::kx_tui::Component;
@@ -75,9 +74,9 @@ impl Component for MenuComponent {
         area: ratatui::prelude::Rect,
         in_focus: bool,
     ) -> eyre::Result<()> {
-        let menu_titles = vec!["Ancestors", "Home", "Persons", "Quit"];
+        let menu_titles = &["Ancestors", "Home", "Persons", "Quit"];
 
-        let menu = menu_titles
+        let menu: Vec<Line> = menu_titles
             .iter()
             .enumerate()
             .map(|(index, t)| {

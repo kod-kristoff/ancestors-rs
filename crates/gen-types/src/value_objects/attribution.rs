@@ -4,7 +4,7 @@ use serde_with::TimestampMilliSeconds;
 use crate::entities::AgentReference;
 
 #[serde_with::serde_as]
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 pub struct Attribution {
     contributor: Option<AgentReference>,
     #[serde_as(as = "TimestampMilliSeconds")]
@@ -13,10 +13,7 @@ pub struct Attribution {
 
 impl Attribution {
     pub fn new() -> Self {
-        Self {
-            contributor: None,
-            modified: Utc::now(),
-        }
+        Self::default()
     }
 }
 
@@ -60,10 +57,8 @@ pub fn verify_attribution_opt(
         } else {
             return Err(format!("a != b, '{:?}' != 'None'", a));
         }
-    } else {
-        if b.is_some() {
-            return Err(format!("a != b, 'None' != '{:?}'", b));
-        }
+    } else if b.is_some() {
+        return Err(format!("a != b, 'None' != '{:?}'", b));
     }
     Ok(())
 }

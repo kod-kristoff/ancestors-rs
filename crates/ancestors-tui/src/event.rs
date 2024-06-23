@@ -1,12 +1,10 @@
 use std::{
-    io,
     sync::mpsc,
     thread,
     time::{Duration, Instant},
 };
 
 use crossterm::event::{self, Event as CrosstermEvent, KeyEvent, MouseEvent};
-use eyre::Result;
 
 /// Terminal events.
 #[derive(Clone, Copy, Debug)]

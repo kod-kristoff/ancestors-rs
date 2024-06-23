@@ -1,8 +1,7 @@
+use ancestors_kernel::gen_services::services::UpsertPerson;
 use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{Cell, Row, Table};
-
-use ancestors_kernel::core::application::service::UpsertPerson;
 
 use crate::app::components::shared::container::render_container;
 use crate::config::Config;
@@ -52,7 +51,7 @@ impl Component for PersonEditorComponent {
         area: ratatui::prelude::Rect,
         in_focus: bool,
     ) -> eyre::Result<()> {
-        let mut chunks = Layout::default()
+        let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Percentage(100), Constraint::Percentage(0)])
             .split(area);

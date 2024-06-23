@@ -3,16 +3,9 @@ use ratatui::widgets::Paragraph;
 use super::shared::container::render_container;
 use crate::kx_tui::Component;
 
+#[derive(Debug, Clone, Default)]
 pub struct StatusComponent {
     status: String,
-}
-
-impl Default for StatusComponent {
-    fn default() -> Self {
-        Self {
-            status: Default::default(),
-        }
-    }
 }
 
 impl StatusComponent {

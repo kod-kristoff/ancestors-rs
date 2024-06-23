@@ -3,11 +3,8 @@ use std::{
     sync::{Arc, RwLock},
 };
 
-use persons::{
-    domain::Person,
-    port::repository::{PersonRepository, PersonRepositoryError},
-    shared_kernel::PersonId,
-};
+use gen_services::repositories::{PersonRepository, PersonRepositoryError};
+use gen_types::{Person, PersonId};
 
 // use gedcomx_model::GedcomX;
 #[derive(Clone)]
@@ -39,11 +36,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
     }
 
     fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
-        self.storage
-            .0
-            .write()
-            .unwrap()
-            .insert(person.id().clone(), person);
+        self.storage.0.write().unwrap().insert(*person.id(), person);
         Ok(())
     }
 }

@@ -5,18 +5,10 @@ pub use name_form::NameForm;
 pub use name_part_type::NamePartType;
 
 /// A name conclusion
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Name {
     name_forms: Vec<NameForm>,
-}
-
-impl Default for Name {
-    fn default() -> Self {
-        Self {
-            name_forms: Vec::new(),
-        }
-    }
 }
 
 impl Name {

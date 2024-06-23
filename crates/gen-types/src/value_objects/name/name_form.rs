@@ -1,5 +1,5 @@
 /// A name form conclusion
-#[derive(Debug, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct NameForm {
     full_text: String,
@@ -9,10 +9,7 @@ pub struct NameForm {
 
 impl NameForm {
     pub fn new() -> Self {
-        Self {
-            full_text: String::new(),
-            lang: String::new(),
-        }
+        Self::default()
     }
 }
 
