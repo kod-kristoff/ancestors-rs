@@ -15,3 +15,5 @@ logs/
 
 # Editor config
 .vscode/
+
+.env
