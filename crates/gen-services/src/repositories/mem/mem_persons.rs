@@ -25,7 +25,17 @@ impl PersonRepository for InMemoryPersonRepo {
         Ok(self.storage.read().expect("").get(id).cloned())
     }
 
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
+    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+        Ok(self
+            .storage
+            .read()
+            .expect("unpoisoned lock")
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    fn save(&self, person: &Person) -> Result<(), PersonRepositoryError> {
         self.storage
             .write()
             .unwrap()

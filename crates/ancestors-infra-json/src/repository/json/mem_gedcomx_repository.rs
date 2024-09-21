@@ -35,8 +35,23 @@ impl PersonRepository for MemGedcomxPersonRepo {
         Ok(self.storage.0.read().expect("").get(id).cloned())
     }
 
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
-        self.storage.0.write().unwrap().insert(person.id(), person);
+    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+        Ok(self
+            .storage
+            .0
+            .read()
+            .expect("valid lock")
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    fn save(&self, person: &Person) -> Result<(), PersonRepositoryError> {
+        self.storage
+            .0
+            .write()
+            .unwrap()
+            .insert(person.id(), person.clone());
         Ok(())
     }
 }

@@ -60,7 +60,7 @@ impl PersonService {
         // person.set_extracted(cmd.extracted);
         let person = Person::new(person, user);
         let person_id = person.id();
-        self.repo.save(person).unwrap();
+        self.repo.save(&person).unwrap();
         Ok(person_id)
     }
 

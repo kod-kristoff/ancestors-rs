@@ -4,6 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono.workspace = true
+diesel = { workspace = true, features = [
+    "chrono",
+    "r2d2",
+    "sqlite",
+    "returning_clauses_for_sqlite_3_35",
+] }
+gen-services = { workspace = true }
+gen-types = { workspace = true }
+serde_json.workspace = true
 
 [lints]
 workspace = true

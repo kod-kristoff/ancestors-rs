@@ -1,6 +1,6 @@
 use std::fmt;
 
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use id_ulid::{Id, Identifiable};
 
 fn utc_now() -> i64 {
@@ -13,7 +13,7 @@ where
 {
     id: Id<O>,
     body: T,
-    updated: i64,
+    updated: DateTime<Utc>,
     updated_by: String,
 }
 
@@ -22,10 +22,10 @@ where
     T: fmt::Debug + Clone + serde::Serialize + serde::Deserialize<'de>,
 {
     pub fn new<S: Into<String>>(body: T, updated_by: S) -> Self {
-        Self::reconstruct(Id::default(), body, utc_now(), updated_by.into())
+        Self::reconstruct(Id::default(), body, Utc::now(), updated_by.into())
     }
 
-    pub fn reconstruct(id: Id<O>, body: T, updated: i64, updated_by: String) -> Self {
+    pub fn reconstruct(id: Id<O>, body: T, updated: DateTime<Utc>, updated_by: String) -> Self {
         Self {
             id,
             body,
@@ -45,11 +45,11 @@ where
     pub fn update_body(&mut self, updated_by: &str, update: impl FnOnce(&mut T)) {
         update(&mut self.body);
         self.updated_by = updated_by.to_string();
-        self.updated = utc_now();
+        self.updated = Utc::now();
     }
 
-    pub fn updated(&self) -> i64 {
-        self.updated
+    pub fn updated(&self) -> &DateTime<Utc> {
+        &self.updated
     }
 
     pub fn updated_by(&self) -> &str {
@@ -64,7 +64,7 @@ where
         Self {
             id: Id::default(),
             body: T::default(),
-            updated: utc_now(),
+            updated: Utc::now(),
             updated_by: "default".to_string(),
         }
     }

@@ -4,7 +4,8 @@ use gen_types::{Person, PersonId};
 
 pub trait PersonRepository {
     fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError>;
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError>;
+    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError>;
+    fn save(&self, person: &Person) -> Result<(), PersonRepositoryError>;
 }
 
 #[derive(Debug)]

@@ -7,6 +7,7 @@ members = ["crates/*"]
 anc-trace = { path = "./crates/anc-trace" }
 ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
 ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
+gen-repo-sqlite = { path = "./crates/gen-repo-sqlite" }
 gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
 gen-types = { path = "./crates/gen-types" }
@@ -15,11 +16,12 @@ id-ulid = { path = "./crates/id-ulid" }
 # non-local crates
 chrono = { version = "0.4.34", features = ["serde"] }
 config = { version = "0.14", default-features = false, features = [
-  "json",
-  "json5_rs",
-  "json5",
+    "json",
+    "json5_rs",
+    "json5",
 ] }
 crossterm = "0.27"
+diesel = { version = "2.2.4" }
 env_logger = "0.11"
 eyre = "0.6"
 hashbrown = "0.14"
