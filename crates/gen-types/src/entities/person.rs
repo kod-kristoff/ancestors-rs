@@ -1,18 +1,21 @@
 mod person_id;
 
 pub use person_id::PersonId;
+use person_id::PersonTag;
 pub type PersonReference = IdReference<PersonId>;
 
-use super::shared::Subject;
+use super::shared::{Entity, Subject};
 use crate::{
     shared::IdReference,
     value_objects::{Fact, Gender, Identifier, Name},
     DocumentReference, Error, SourceReference,
 };
 
+pub type Person = Entity<PersonTag, PersonBody>;
+
 #[derive(Debug, Default, Clone, serde::Deserialize, serde::Serialize)]
-pub struct Person {
-    id: PersonId,
+pub struct PersonBody {
+    // id: PersonId,
     names: Vec<Name>,
     #[serde(flatten)]
     subject: Subject<PersonReference>,
@@ -24,31 +27,28 @@ pub struct Person {
     sources: Vec<SourceReference>,
 }
 
-impl PartialEq for Person {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-}
-impl Person {
-    pub fn new(id: PersonId) -> Person {
-        Self {
-            id,
-            ..Default::default()
-        }
+// impl PartialEq for PersonBody {
+//     fn eq(&self, other: &Self) -> bool {
+//         self.id == other.id
+//     }
+// }
+impl PersonBody {
+    pub fn new() -> PersonBody {
+        Default::default()
     }
 
-    pub fn with_id<I>(id: I) -> Result<Person, Error>
-    where
-        I: TryInto<PersonId>,
-        Error: From<<I as TryInto<PersonId>>::Error>,
-    {
-        let id: PersonId = id.try_into()?;
-        Ok(Self::new(id))
-    }
+    // pub fn with_id<I>(id: I) -> Result<PersonBody, Error>
+    // where
+    //     I: TryInto<PersonId>,
+    //     Error: From<<I as TryInto<PersonId>>::Error>,
+    // {
+    //     let id: PersonId = id.try_into()?;
+    //     Ok(Self::new(id))
+    // }
 }
 
 // Builder lite
-impl Person {
+impl PersonBody {
     // pub fn extracted(mut self, yes: bool) -> Self {
     //     self.set_extracted(yes);
     //     self
@@ -86,10 +86,10 @@ impl Person {
     }
 }
 
-impl Person {
-    pub fn id(&self) -> &PersonId {
-        &self.id
-    }
+impl PersonBody {
+    // pub fn id(&self) -> &PersonId {
+    //     &self.id
+    // }
     pub fn is_extracted(&self) -> bool {
         self.subject.is_extracted()
     }
@@ -131,6 +131,6 @@ impl Person {
 
 impl From<&Person> for PersonReference {
     fn from(value: &Person) -> Self {
-        Self::new(value.id)
+        Self::new(value.id())
     }
 }

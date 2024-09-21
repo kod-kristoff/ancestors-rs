@@ -7,9 +7,9 @@ fn adding_person_succeeds() {
     let service = PersonService::new(repo.clone());
 
     let cmd = AddPerson::default();
-    service.add(&cmd).unwrap();
+    let id = service.add("user", &cmd).unwrap();
 
-    let person = repo.get(&cmd.id).unwrap();
+    let _person = repo.get(&id).unwrap();
 }
 #[test]
 fn editing_person_succeeds() {
@@ -17,9 +17,7 @@ fn editing_person_succeeds() {
     let service = PersonService::new(repo.clone());
 
     let add_cmd = AddPerson::default();
-    service.add(&add_cmd).unwrap();
-    let cmd = EditPerson {
-        id: add_cmd.id.clone(),
-    };
+    let id = service.add("user", &add_cmd).unwrap();
+    let cmd = EditPerson { id };
     service.edit(&cmd).unwrap();
 }

@@ -8,6 +8,7 @@
 
 use chrono::{DateTime, Utc};
 use gen_types::{
+    entities::PersonBody,
     value_objects::{
         Attribution, Date, Fact, FactType, Gender, Identifier, IdentifierType, ResourceType,
     },
@@ -47,22 +48,25 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
     );
     emma_ident.set_namespace("http://gedcomx.org".parse()?);
     emma_ident.set_id("#P-1".parse()?);
-    let emma = Person::default()
+    let emma = PersonBody::default()
         // .extracted(true)
         .source(&source_description)
         .name("Emma Bocock")
         .gender(Gender::Female)
         .identifier(emma_ident)
         .fact(birth);
-    let father = Person::default() //new(iri("#P-2"))
+    let emma = Person::new(emma, "user");
+    let father = PersonBody::default() //new(iri("#P-2"))
         // .extracted(true)
         .source(&source_description)
         .name("William Bocock")
         .fact(Fact::new(FactType::Occupation).value("Toll Collector"));
-    let mother = Person::default() //:new(iri("#P-3"))
+    let father = Person::new(father, "user");
+    let mother = PersonBody::default() //:new(iri("#P-3"))
         // .extracted(true)
         .source(&source_description)
         .name("Sarah Bocock formerly Brough");
+    let mother = Person::new(mother, "user");
     let father_relationship = Relationship::new(RelationshipType::ParentChild)
         .person1(&father)
         .person2(&emma);
@@ -72,7 +76,8 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
         .person2(&emma);
 
     let analysis = Document::default().text("...Jane Doe's analysis document...");
-    let emma_conclusion = Person::default().evidence(&emma).analysis(&analysis);
+    let emma_conclusion = PersonBody::default().evidence(&emma).analysis(&analysis);
+    let emma_conclusion = Person::new(emma_conclusion, "user");
     // // GedcomX::new()
     Ok(Batch::new()
         .agent(contributor)

@@ -36,7 +36,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
     }
 
     fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
-        self.storage.0.write().unwrap().insert(*person.id(), person);
+        self.storage.0.write().unwrap().insert(person.id(), person);
         Ok(())
     }
 }

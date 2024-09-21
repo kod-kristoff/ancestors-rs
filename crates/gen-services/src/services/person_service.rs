@@ -1,4 +1,4 @@
-use gen_types::{Person, PersonId};
+use gen_types::{entities::PersonBody, Person, PersonId};
 
 use crate::repositories::SharedPersonRepository;
 
@@ -6,7 +6,6 @@ use super::UseCaseResult;
 
 #[derive(Debug, Clone)]
 pub struct AddPerson {
-    pub id: PersonId,
     pub extracted: bool,
     pub name: Option<String>,
 }
@@ -14,7 +13,6 @@ pub struct AddPerson {
 impl Default for AddPerson {
     fn default() -> Self {
         Self {
-            id: PersonId::default(),
             name: None,
             extracted: true,
         }
@@ -54,23 +52,25 @@ impl PersonService {
 }
 
 impl PersonService {
-    pub fn add(&self, cmd: &AddPerson) -> UseCaseResult<()> {
-        let mut person = Person::new(cmd.id);
+    pub fn add(&self, user: &str, cmd: &AddPerson) -> UseCaseResult<PersonId> {
+        let mut person = PersonBody::default();
         if let Some(name) = &cmd.name {
             person = person.name(name.as_str());
         }
         // person.set_extracted(cmd.extracted);
+        let person = Person::new(person, user);
+        let person_id = person.id();
         self.repo.save(person).unwrap();
-        Ok(())
+        Ok(person_id)
     }
 
     pub fn edit(&self, cmd: &EditPerson) -> UseCaseResult<()> {
-        let person = Person::new(cmd.id);
+        // let person = Person::new(cmd.id);
         // if let Some(name) = &cmd.name {
         //     person = person.name(name.as_str());
         // }
         // person.set_extracted(cmd.extracted);
-        self.repo.save(person).unwrap();
+        // self.repo.save(person).unwrap();
         Ok(())
     }
 }
@@ -85,7 +85,7 @@ pub struct EditPerson {
 impl From<Person> for EditPerson {
     fn from(value: Person) -> Self {
         Self {
-            id: *value.id(),
+            id: value.id(),
             // name: None,
             // extracted: true,
         }

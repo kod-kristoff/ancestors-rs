@@ -29,7 +29,7 @@ impl PersonRepository for InMemoryPersonRepo {
         self.storage
             .write()
             .unwrap()
-            .insert(*person.id(), person.clone());
+            .insert(person.id(), person.clone());
         Ok(())
     }
 }

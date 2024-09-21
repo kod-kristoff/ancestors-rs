@@ -18,7 +18,8 @@ pub fn process(batch: &mut Batch, url: &str, src: &str) -> Result<(), ProcessErr
     dbg!(&ident);
     let riksarkivet_ns = Some("http://riksarkivet.se");
     let curr_person_opt: Option<&mut Person> = batch.persons_mut().iter_mut().find(|p| {
-        p.identifiers()
+        p.body()
+            .identifiers()
             .iter()
             .any(|i| i.namespace() == riksarkivet_ns && i.id() == ident)
     });
@@ -99,7 +100,7 @@ fn extract_person(
                     dbg!(&div_faltdata.html());
                     dbg!(&texts);
                     if field == "Namn" {
-                        new_person.add_name(texts[0].into());
+                        new_person.update_body("scraper", |p| p.add_name(texts[0].into()));
                     } else if field == "Hemförsamling" {
                         curr_household.add_fact(Fact::new(FactType::Living));
                     } else {
