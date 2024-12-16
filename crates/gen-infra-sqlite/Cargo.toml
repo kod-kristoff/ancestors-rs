@@ -1,0 +1,15 @@
+[package]
+name = "gen-infra-sqlite"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gen-types.workspace = true
+gen-services.workspace = true
+thiserror.workspace = true
+miette.workspace = true
+rusqlite = "0.32.1"
+serde_json.workspace = true
+
+[lints]
+workspace = true
