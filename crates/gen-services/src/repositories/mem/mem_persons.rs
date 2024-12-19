@@ -24,6 +24,16 @@ impl PersonRepository for InMemoryPersonRepo {
     fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
         Ok(self.storage.read().expect("").get(id).cloned())
     }
+    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+        Ok(self
+            .storage
+            .read()
+            .expect("non-poisoned")
+            .iter()
+            .map(|(_, person)| person)
+            .cloned()
+            .collect())
+    }
 
     fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
         self.storage

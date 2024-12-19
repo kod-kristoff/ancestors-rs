@@ -61,14 +61,32 @@ impl PersonRepository for RusqlitePersonRepo {
         &self,
         id: &gen_types::PersonId,
     ) -> Result<Option<gen_types::Person>, gen_services::repositories::PersonRepositoryError> {
-
-        let mut stmt = self.conn.prepare("SELECT FROM persons WHERE id=:id").unwrap();
-        let mut rows = stmt.query(&[(":id",&id.db_id())]).unwrap();
+        let mut stmt = self
+            .conn
+            .prepare("SELECT data FROM persons WHERE id=:id")
+            .unwrap();
+        let mut rows = stmt.query(&[(":id", &id.db_id())]).unwrap();
         if let Some(row) = rows.next().unwrap() {
-    let data: String = row.get(2).unwrap();
-    Ok(serde_json::from_str(&data).unwrap())
+            let data: String = row.get(0).unwrap();
+            Ok(serde_json::from_str(&data).unwrap())
         } else {
             Ok(None)
         }
+    }
+    fn get_all(
+        &self,
+    ) -> Result<Vec<gen_types::Person>, gen_services::repositories::PersonRepositoryError> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT data FROM persons WHERE id=:id")
+            .unwrap();
+        let mut rows = stmt.query(&[(":id", &id.db_id())]).unwrap();
+        let mut out = Vec::new();
+        while let Some(row) = rows.next().unwrap() {
+            let data: String = row.get(2).unwrap();
+            let person = serde_json::from_str(&data).unwrap();
+            out.push(person);
+        }
+        Ok(out)
     }
 }

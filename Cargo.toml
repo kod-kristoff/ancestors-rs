@@ -5,8 +5,8 @@ members = ["crates/*", "crates/gen-infra-sqlite"]
 [workspace.dependencies]
 # local crates
 anc-trace = { path = "./crates/anc-trace" }
-ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
-ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
+ancestors-infra-json = {  path = "./crates/ancestors-infra-json" }
+ancestors-kernel = {  path = "./crates/ancestors-kernel" }
 gen-infra-sqlite ={ path ="./crates/gen-infra-sqlite" }
 gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
