@@ -1,4 +1,5 @@
 use ancestors_cli::{cli::flags, shared::pretty::prepare_and_run};
+use gen_repo_sqlite::SqlitePersonRepository;
 
 fn main() {
     if let Err(error) = try_main() {
@@ -15,12 +16,13 @@ fn try_main() -> miette::Result<()> {
     let cmd = flags.subcommand;
     match cmd {
         flags::AncestorsCliCmd::Scrape(flags::Scrape { url }) => {
+            let repo = SqlitePersonRepository::arc_new("./data/ancestors.db3");
             prepare_and_run(
                 "scrape",
                 trace,
                 verbose,
-                None,
-                move |_progress, out, err| gen_scraper::scrape(out, err, vec![url]),
+                ancestors_cli::shared::STANDARD_RANGE,
+                move |_progress, out, err| gen_scraper::scrape(repo, out, err, vec![url]),
             )
         }?,
     }

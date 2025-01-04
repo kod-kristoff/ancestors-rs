@@ -1,5 +1,9 @@
+use std::collections::{HashMap, HashSet};
+
 use gen_types::{
-    value_objects::{Fact, FactType},
+    entities::PersonBody,
+    shared::IriRef,
+    value_objects::{Fact, FactType, Identifier, IdentifierType},
     Batch, Household, Person,
 };
 // use gen_types::{conclusion::Person, Batch, Fact, FactType, Family};
@@ -8,15 +12,23 @@ use scraper::{Html, Selector};
 
 use crate::ProcessError;
 
+#[derive(Debug, Clone, Default)]
+struct Context {
+    visited_urls: HashSet<String>,
+    to_visit: Vec<String>,
+    persons: HashMap<String, Person>,
+    households: HashMap<String, Household>,
+}
 // use persons::application::service::AddPerson;
 
 pub fn process(batch: &mut Batch, url: &str, src: &str) -> Result<(), ProcessError> {
+    let mut ctx = Context::default();
     let html = Html::parse_document(src);
     // dbg!(&html);
 
     let ident = parse_ident(url);
     dbg!(&ident);
-    let riksarkivet_ns = Some("http://riksarkivet.se");
+    let riksarkivet_ns = Some(NS_RIKSARKIVET);
     let curr_person_opt: Option<&mut Person> = batch.persons_mut().iter_mut().find(|p| {
         p.body()
             .identifiers()
@@ -26,15 +38,20 @@ pub fn process(batch: &mut Batch, url: &str, src: &str) -> Result<(), ProcessErr
     dbg!(&curr_person_opt);
     if let Some(person) = curr_person_opt {
         let mut curr_household = Household::default();
-        extract_person(person, &mut curr_household, &html)?;
+        extract_person(&mut ctx, person, &mut curr_household, &html)?;
     } else {
         let mut new_person = Person::default();
         let mut curr_household = Household::default();
-        extract_person(&mut new_person, &mut curr_household, &html)?;
+        extract_person(&mut ctx, &mut new_person, &mut curr_household, &html)?;
     }
     Ok(())
 }
+
+const BASE_URL: &'static str = "https://sok.riksarkivet.se";
+const NS_RIKSARKIVET: &'static str = "http://riksarkivet.se";
+
 fn extract_person(
+    ctx: &mut Context,
     new_person: &mut Person,
     curr_household: &mut Household,
     html: &Html,
@@ -77,14 +94,58 @@ fn extract_person(
         let div_faltdata_selector = Selector::parse("div.post_faltdata").unwrap();
         let b_selector = Selector::parse("b").unwrap();
         let a_selector = Selector::parse("a").unwrap();
+        // let mut hemort = None;
+        // let mut hemparish = None;
+        // let mut kontrakt = None;
+        // let mut län = None;
+        let mut mapping = HashMap::new();
         for div_faltdata in post.select(&div_faltdata_selector) {
             if let Some(field) = div_faltdata.select(&b_selector).next() {
-                if let Some(link) = div_faltdata
-                    .select(&a_selector)
-                    .next()
-                    .map(|l| l.value().attr("href"))
+                if let Some(link) = div_faltdata.select(&a_selector).next()
+                // .map(|l| l.value().attr("href"))
                 {
-                    dbg!(&link);
+                    // dbg!(&link.html());
+                    // dbg!(&div_faltdata.html());
+                    if let Some(href) = link.attr("href") {
+                        dbg!(&href);
+                        if let Some(ident) = parse_ident(href) {
+                            dbg!(&ident);
+                            let new_url = format!("{}{}", BASE_URL, href);
+                            if !ctx.visited_urls.contains(&new_url) {
+                                ctx.to_visit.push(new_url.clone());
+                            }
+                            let iri = IriRef::parse(new_url).unwrap();
+                            if !ctx.persons.contains_key(ident) {
+                                let ident = ident.to_string();
+                                let mut new_ident = Identifier::new(IdentifierType::Primary, iri);
+                                new_ident.set_namespace(
+                                    IriRef::parse(NS_RIKSARKIVET.to_string()).unwrap(),
+                                );
+                                new_ident.set_id(IriRef::parse(ident.clone()).unwrap());
+                                let body = PersonBody::default().identifier(new_ident);
+                                let new_person = Person::new(body, "scraper");
+                                curr_household.update_body("scraper", |body| {
+                                    body.add_member(new_person.id())
+                                });
+                                ctx.persons.insert(ident.to_string(), new_person);
+                            }
+                        }
+                    }
+
+                    let mut texts = link.text();
+                    if let Some(field) = texts.next() {
+                        dbg!(&field);
+                    }
+                    if let Some(field) = texts.next() {
+                        dbg!(&field);
+                    }
+                    let mut div_texts = div_faltdata.text();
+                    while let Some(text) = div_texts.next() {
+                        if text.trim().is_empty() {
+                            continue;
+                        }
+                        dbg!(&text);
+                    }
                 } else if let Some(field) = field.text().next() {
                     let field = field.trim();
                     if field.is_empty() {
@@ -99,12 +160,39 @@ fn extract_person(
                     dbg!(&field);
                     dbg!(&div_faltdata.html());
                     dbg!(&texts);
-                    if field == "Namn" {
-                        new_person.update_body("scraper", |p| p.add_name(texts[0].into()));
-                    } else if field == "Hemförsamling" {
-                        curr_household.add_fact(Fact::new(FactType::Living));
-                    } else {
-                        return Err(ProcessError::UnknownField(field.into()));
+                    mapping.insert(field.to_string(), texts[0].to_string());
+                    dbg!(&mapping);
+                    match field {
+                        "Civilstånd" => {}
+                        "Fam. nr 1" => {}
+                        "Familj nr" => {}
+                        "Famstkod" => {}
+                        "Födelseförsamling" => {}
+                        "Födelseår" => {}
+                        "Hemförsamling" => {
+                            // curr_household.add_fact(Fact::new(FactType::Living));
+                            // hemparish = Some(texts[0].to_string());
+                        }
+                        "Hemort" => {
+                            // hemort = Some(texts[0].to_string());
+                        }
+                        "Kontrakt" => {
+                            // kontrakt = Some(texts[0].to_string());
+                        }
+                        "Kön" => {}
+                        "Län" => {
+                            // län = Some(texts[0].to_string());
+                        }
+                        "Namn" => {
+                            new_person.update_body("scraper", |p| p.add_name(texts[0].into()));
+                        }
+                        "Om hushållet" => {}
+                        "Rad" => {}
+                        "Sida" => {}
+                        "Upprättad av" => {}
+                        "Yrke" => {}
+
+                        _ => return Err(ProcessError::UnknownField(field.into())),
                     }
                     dbg!(&new_person);
                     dbg!(&curr_household);
@@ -112,8 +200,16 @@ fn extract_person(
             } else {
                 continue;
             }
+            dbg!(&ctx);
             // dbg!(&div_faltdata.text().collect::<String>());
         }
+        new_person.update_body("scraper", |body| {
+            dbg!(&mapping);
+            let hemort = mapping.get("Hemort");
+            let hemparish = mapping.get("Hemförsamling");
+            let kontrkat = mapping.get("Kontrakt");
+            let län = mapping.get("Län");
+        });
     }
     Err(ProcessError::UnknownError("return something".into()))
 }

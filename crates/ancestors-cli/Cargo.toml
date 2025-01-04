@@ -20,5 +20,6 @@ xflags.workspace = true
 # local deps
 gen-scraper.workspace = true
 anc-trace.workspace = true
+gen-repo-sqlite = { workspace = true }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-forest = "0.1.6"

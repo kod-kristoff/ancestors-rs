@@ -2,11 +2,13 @@ mod process;
 
 use std::fs;
 
+use gen_services::repositories::SharedPersonRepository;
 use gen_types::Batch;
 
 use crate::ScrapeError;
 
 pub fn scrape(
+    repo: SharedPersonRepository,
     _out: &mut dyn std::io::Write,
     err: &mut dyn std::io::Write,
     start_urls: Vec<String>,
