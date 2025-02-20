@@ -44,7 +44,7 @@ impl SqlitePersonRepository {
 }
 
 impl PersonRepository for SqlitePersonRepository {
-    fn get(
+    fn get_person(
         &self,
         id: &PersonId,
     ) -> Result<Option<Person>, gen_services::repositories::PersonRepositoryError> {
@@ -65,7 +65,9 @@ impl PersonRepository for SqlitePersonRepository {
         }
     }
 
-    fn get_all(&self) -> Result<Vec<Person>, gen_services::repositories::PersonRepositoryError> {
+    fn get_all_persons(
+        &self,
+    ) -> Result<Vec<Person>, gen_services::repositories::PersonRepositoryError> {
         use crate::schema::persons::dsl::persons;
         let mut conn = self.read_pool.get().unwrap();
         let all_persons = persons
@@ -78,7 +80,7 @@ impl PersonRepository for SqlitePersonRepository {
         }
         Ok(result)
     }
-    fn save(
+    fn save_person(
         &self,
         person: &Person,
     ) -> Result<(), gen_services::repositories::PersonRepositoryError> {

@@ -21,11 +21,11 @@ impl InMemoryPersonRepo {
 }
 
 impl PersonRepository for InMemoryPersonRepo {
-    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
+    fn get_person(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
         Ok(self.storage.read().expect("").get(id).cloned())
     }
 
-    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+    fn get_all_persons(&self) -> Result<Vec<Person>, PersonRepositoryError> {
         Ok(self
             .storage
             .read()
@@ -35,7 +35,7 @@ impl PersonRepository for InMemoryPersonRepo {
             .collect())
     }
 
-    fn save(&self, person: &Person) -> Result<(), PersonRepositoryError> {
+    fn save_person(&self, person: &Person) -> Result<(), PersonRepositoryError> {
         self.storage
             .write()
             .unwrap()

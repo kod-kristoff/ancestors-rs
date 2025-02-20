@@ -31,11 +31,11 @@ impl MemGedcomxPersonRepo {
 }
 
 impl PersonRepository for MemGedcomxPersonRepo {
-    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
+    fn get_person(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
         Ok(self.storage.0.read().expect("").get(id).cloned())
     }
 
-    fn get_all(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+    fn get_all_persons(&self) -> Result<Vec<Person>, PersonRepositoryError> {
         Ok(self
             .storage
             .0
@@ -46,7 +46,7 @@ impl PersonRepository for MemGedcomxPersonRepo {
             .collect())
     }
 
-    fn save(&self, person: &Person) -> Result<(), PersonRepositoryError> {
+    fn save_person(&self, person: &Person) -> Result<(), PersonRepositoryError> {
         self.storage
             .0
             .write()
