@@ -8,23 +8,29 @@
 
 use chrono::{DateTime, Utc};
 use gen_types::{
-    entities::PersonBody,
+    entities::{AgentBody, PersonBody, PlaceBody},
     value_objects::{
         Attribution, Date, Fact, FactType, Gender, Identifier, IdentifierType, ResourceType,
     },
-    Agent, Batch, Document, Person, PlaceReference, Relationship, RelationshipType, SourceCitation,
-    SourceDescription,
+    Agent, Batch, Document, Person, Place, PlaceReference, Relationship, RelationshipType,
+    SourceCitation, SourceDescription,
 };
 
 // pub fn iri(s: &str) -> IriRef {
 //     IriRef::parse(s.into()).expect("parse iri")
 // }
 pub fn emma_bocock_example() -> eyre::Result<Batch> {
-    let contributor = Agent::default()
-        .name("Jane Doe")
-        .try_email("example@example.org")
-        .expect("email");
-    let repository = Agent::default().name("General Registry Office, Southport");
+    let contributor = Agent::new(
+        AgentBody::default()
+            .name("Jane Doe")
+            .try_email("example@example.org")
+            .expect("email"),
+        "user@example.com",
+    );
+    let repository = Agent::new(
+        AgentBody::default().name("General Registry Office, Southport"),
+        "user@example.com",
+    );
     let attribution = Attribution::new().contributor(&contributor).modified(
         "2014-03-07T00:00:00-07:00"
             .parse::<DateTime<Utc>>()
@@ -37,11 +43,15 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
       .resource_type(ResourceType::PhysicalArtifact)
       .created("1843-07-27T00:00:00-07:00".parse::<DateTime<Utc>>().expect("failed"))
       .repository(&repository);
+    let birthplace = Place::new(
+        PlaceBody::new().original(
+            "Broadfield Bar, Abbeydale Road, Ecclesall-Bierlow, York, England, United Kingdom",
+        ),
+        "user@example.com",
+    );
     let birth = Fact::new(FactType::Birth)
         .date(Date::new().original("23 June 1843"))
-        .place(PlaceReference::new().original(
-            "Broadfield Bar, Abbeydale Road, Ecclesall-Bierlow, York, England, United Kingdom",
-        ));
+        .place(&birthplace);
     let mut emma_ident = Identifier::new(
         IdentifierType::Primary,
         "http://gedcomx.org/example#P-1".parse()?,

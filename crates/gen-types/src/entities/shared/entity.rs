@@ -1,7 +1,9 @@
-use std::fmt;
+use std::fmt::{self, Debug};
 
 use chrono::{DateTime, Utc};
 use id_ulid::{Id, Identifiable};
+
+use crate::shared::IdReference;
 
 fn utc_now() -> i64 {
     Utc::now().timestamp()
