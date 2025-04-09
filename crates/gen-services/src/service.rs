@@ -1,0 +1,71 @@
+use gen_types::{entities::PersonBody, Person};
+
+use crate::{
+    repositories::{SharedAgentRepository, SharedPersonRepository},
+    services::{
+        person_service::AddPersonError, AddAgentError, AddPerson, AgentService, GenService,
+        PersonService,
+    },
+};
+
+#[derive(Clone)]
+pub struct Service {
+    agent_repo: SharedAgentRepository,
+    person_repo: SharedPersonRepository,
+}
+
+impl Service {
+    pub fn new(agent_repo: SharedAgentRepository, person_repo: SharedPersonRepository) -> Self {
+        Self {
+            agent_repo,
+            person_repo,
+        }
+    }
+}
+
+impl PersonService for Service {
+    fn add_person(&self, user: &str, cmd: &AddPerson) -> Result<Person, AddPersonError> {
+        let mut person = PersonBody::default();
+        if let Some(name) = &cmd.name {
+            person = person.name(name.as_str());
+        }
+        // person.set_extracted(cmd.extracted);
+        let person = Person::new(person, user);
+        self.person_repo.save_person(&person).unwrap();
+        Ok(person)
+    }
+
+    fn add_person_raw(&self, user: &str, mut person: Person) -> Result<Person, AddPersonError> {
+        person.stamp_user_and_time(user);
+        self.person_repo
+            .save_person(&person)
+            .map_err(|err| AddPersonError::Unknown(err.into()))?;
+        Ok(person)
+    }
+
+    // pub fn edit(&self, cmd: &EditPerson) -> UseCaseResult<()> {
+    //     // let person = Person::new(cmd.id);
+    //     // if let Some(name) = &cmd.name {
+    //     //     person = person.name(name.as_str());
+    //     // }
+    //     // person.set_extracted(cmd.extracted);
+    //     // self.repo.save(person).unwrap();
+    //     Ok(())
+    // }
+}
+
+impl AgentService for Service {
+    fn add_agent_raw(
+        &self,
+        user: &str,
+        mut agent: gen_types::Agent,
+    ) -> Result<gen_types::Agent, crate::services::AddAgentError> {
+        agent.stamp_user_and_time(user);
+        self.agent_repo
+            .save_agent(&agent)
+            .map_err(|err| AddAgentError::Unknown(err.into()))?;
+        Ok(agent)
+    }
+}
+
+impl GenService for Service {}

@@ -38,6 +38,7 @@ impl Default for UpsertPerson {
 }
 pub trait PersonService {
     fn add_person(&self, user: &str, person: &AddPerson) -> Result<Person, AddPersonError>;
+    fn add_person_raw(&self, user: &str, person: Person) -> Result<Person, AddPersonError>;
 }
 
 #[derive(Debug, thiserror::Error, miette::Diagnostic)]
