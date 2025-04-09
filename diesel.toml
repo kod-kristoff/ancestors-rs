@@ -6,4 +6,4 @@ file = "crates/gen-repo-sqlite/src/schema.rs"
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [migrations_directory]
-dir = "/home/kristoffer/projekt/kristoff/ancestors-rs/migrations"
+dir = "migrations"

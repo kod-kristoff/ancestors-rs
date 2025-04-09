@@ -92,7 +92,7 @@ impl PersonRepository for SqlitePersonRepository {
             id: &id,
             extracted: person.body().is_extracted(),
             body: &body,
-            updated: person.updated(),
+            updated: person.updated().naive_utc(),
             updated_by: person.updated_by(),
         };
 
