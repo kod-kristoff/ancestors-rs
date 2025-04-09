@@ -3,8 +3,6 @@ use std::fmt::{self, Debug};
 use chrono::{DateTime, Utc};
 use id_ulid::{Id, Identifiable};
 
-use crate::shared::IdReference;
-
 fn utc_now() -> i64 {
     Utc::now().timestamp()
 }
@@ -46,6 +44,10 @@ where
 
     pub fn update_body(&mut self, updated_by: &str, update: impl FnOnce(&mut T)) {
         update(&mut self.body);
+        self.stamp_user_and_time(updated_by);
+    }
+
+    pub fn stamp_user_and_time(&mut self, updated_by: &str) {
         self.updated_by = updated_by.to_string();
         self.updated = Utc::now();
     }
