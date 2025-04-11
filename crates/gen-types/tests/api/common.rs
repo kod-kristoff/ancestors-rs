@@ -8,7 +8,7 @@
 
 use chrono::{DateTime, Utc};
 use gen_types::{
-    entities::{AgentBody, PersonBody, PlaceBody},
+    entities::{AgentBody, DocumentBody, PersonBody, PlaceBody},
     value_objects::{
         Attribution, Date, Fact, FactType, Gender, Identifier, IdentifierType, ResourceType,
     },
@@ -85,7 +85,10 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
         .person1(&mother)
         .person2(&emma);
 
-    let analysis = Document::default().text("...Jane Doe's analysis document...");
+    let analysis = Document::new(
+        DocumentBody::default().text("...Jane Doe's analysis document..."),
+        "user",
+    );
     let emma_conclusion = PersonBody::default().evidence(&emma).analysis(&analysis);
     let emma_conclusion = Person::new(emma_conclusion, "user");
     // // GedcomX::new()

@@ -1,6 +1,6 @@
 pub use agent::{Agent, AgentBody, AgentId, AgentReference};
 // pub use batch::Batch;
-pub use document::{Document, DocumentId, DocumentReference};
+pub use document::{Document, DocumentBody, DocumentId, DocumentReference};
 pub use family::{Family, FamilyId};
 pub use household::{Household, HouseholdId};
 pub use person::{Person, PersonBody, PersonId, PersonReference};
