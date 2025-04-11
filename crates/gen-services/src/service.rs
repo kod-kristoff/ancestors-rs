@@ -1,23 +1,29 @@
 use gen_types::{entities::PersonBody, Person};
 
 use crate::{
-    repositories::{SharedAgentRepository, SharedPersonRepository},
+    repositories::{SharedAgentRepository, SharedDocumentRepository, SharedPersonRepository},
     services::{
-        person_service::AddPersonError, AddAgentError, AddPerson, AgentService, GenService,
-        PersonService,
+        person_service::AddPersonError, AddAgentError, AddDocumentError, AddPerson, AgentService,
+        DocumentService, GenService, PersonService,
     },
 };
 
 #[derive(Clone)]
 pub struct Service {
     agent_repo: SharedAgentRepository,
+    document_repo: SharedDocumentRepository,
     person_repo: SharedPersonRepository,
 }
 
 impl Service {
-    pub fn new(agent_repo: SharedAgentRepository, person_repo: SharedPersonRepository) -> Self {
+    pub fn new(
+        agent_repo: SharedAgentRepository,
+        document_repo: SharedDocumentRepository,
+        person_repo: SharedPersonRepository,
+    ) -> Self {
         Self {
             agent_repo,
+            document_repo,
             person_repo,
         }
     }
@@ -65,6 +71,20 @@ impl AgentService for Service {
             .save_agent(&agent)
             .map_err(|err| AddAgentError::Unknown(err.into()))?;
         Ok(agent)
+    }
+}
+
+impl DocumentService for Service {
+    fn add_document_raw(
+        &self,
+        user: &str,
+        mut document: gen_types::Document,
+    ) -> Result<gen_types::Document, crate::services::AddDocumentError> {
+        document.stamp_user_and_time(user);
+        self.document_repo
+            .save_document(&document)
+            .map_err(|err| AddDocumentError::Unknown(err.into()))?;
+        Ok(document)
     }
 }
 
