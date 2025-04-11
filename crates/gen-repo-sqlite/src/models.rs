@@ -20,6 +20,25 @@ pub struct NewAgent<'a> {
 }
 
 #[derive(Debug, Queryable, Selectable)]
+#[diesel(table_name = crate::schema::documents)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct DocumentInDb {
+    pub id: String,
+    pub body: String,
+    pub updated: chrono::NaiveDateTime,
+    pub updated_by: String,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::documents)]
+pub struct NewDocument<'a> {
+    pub id: &'a str,
+    pub body: &'a str,
+    pub updated: chrono::NaiveDateTime,
+    pub updated_by: &'a str,
+}
+
+#[derive(Debug, Queryable, Selectable)]
 #[diesel(table_name = crate::schema::persons)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct PersonInDb {
