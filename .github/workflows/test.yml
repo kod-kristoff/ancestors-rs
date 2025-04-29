@@ -7,7 +7,9 @@
 # - coverage: runs the test suite and collects coverage information
 # See check.yml for information about how the concurrency cancellation and workflow triggering works
 permissions:
+  actions: write
   contents: read
+  id-token: write
 on:
   push:
     branches: [main]
@@ -115,3 +117,7 @@ jobs:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
           env_vars: OS,RUST
+      - uses: qltysh/qlty-action/coverage@main
+        with:
+          oidc: true
+          files: lcov.info
