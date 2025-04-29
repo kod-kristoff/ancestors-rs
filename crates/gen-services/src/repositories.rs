@@ -6,6 +6,9 @@ pub type SharedAgentRepository = Arc<dyn AgentRepository>;
 pub use self::document_repository::{DocumentRepository, DocumentRepositoryError};
 pub type SharedDocumentRepository = Arc<dyn DocumentRepository>;
 
+pub use self::household_repository::{HouseholdRepository, HouseholdRepositoryError};
+pub type SharedHouseholdRepository = Arc<dyn HouseholdRepository>;
+
 pub use self::person_repository::{PersonRepository, PersonRepositoryError};
 pub type SharedPersonRepository = Arc<dyn PersonRepository>;
 

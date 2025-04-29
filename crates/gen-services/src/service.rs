@@ -1,10 +1,14 @@
 use gen_types::{entities::PersonBody, Person};
 
 use crate::{
-    repositories::{SharedAgentRepository, SharedDocumentRepository, SharedPersonRepository},
+    repositories::{
+        SharedAgentRepository, SharedDocumentRepository, SharedHouseholdRepository,
+        SharedPersonRepository,
+    },
     services::{
-        person_service::AddPersonError, AddAgentError, AddDocumentError, AddPerson, AgentService,
-        DocumentService, GenService, PersonService,
+        household_service::AddHouseholdError, person_service::AddPersonError, AddAgentError,
+        AddDocumentError, AddPerson, AgentService, DocumentService, GenService, HouseholdService,
+        PersonService,
     },
 };
 
@@ -12,6 +16,7 @@ use crate::{
 pub struct Service {
     agent_repo: SharedAgentRepository,
     document_repo: SharedDocumentRepository,
+    household_repo: SharedHouseholdRepository,
     person_repo: SharedPersonRepository,
 }
 
@@ -19,11 +24,13 @@ impl Service {
     pub fn new(
         agent_repo: SharedAgentRepository,
         document_repo: SharedDocumentRepository,
+        household_repo: SharedHouseholdRepository,
         person_repo: SharedPersonRepository,
     ) -> Self {
         Self {
             agent_repo,
             document_repo,
+            household_repo,
             person_repo,
         }
     }
@@ -85,6 +92,20 @@ impl DocumentService for Service {
             .save_document(&document)
             .map_err(|err| AddDocumentError::Unknown(err.into()))?;
         Ok(document)
+    }
+}
+
+impl HouseholdService for Service {
+    fn add_household_raw(
+        &self,
+        user: &str,
+        mut household: gen_types::Household,
+    ) -> Result<gen_types::Household, crate::services::AddHouseholdError> {
+        household.stamp_user_and_time(user);
+        self.household_repo
+            .save_household(&household)
+            .map_err(|err| AddHouseholdError::Unknown(err.into()))?;
+        Ok(household)
     }
 }
 
