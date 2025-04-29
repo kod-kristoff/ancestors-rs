@@ -1,9 +1,3 @@
-mod batch;
-pub mod entities;
-mod error;
-pub mod shared;
-pub mod value_objects;
-
 pub use batch::Batch;
 pub use entities::{
     Place, PlaceId, PlaceReference, {Agent, AgentId}, {Document, DocumentId, DocumentReference},
@@ -12,3 +6,10 @@ pub use entities::{
     {SourceCitation, SourceDescription, SourceId, SourceReference},
 };
 pub use error::{Error, Result};
+pub use gedcomx_date::GedcomxDate;
+
+mod batch;
+pub mod entities;
+mod error;
+pub mod shared;
+pub mod value_objects;

@@ -24,6 +24,7 @@ crossterm = "0.27"
 diesel = { version = "2.2.4" }
 env_logger = "0.11"
 eyre = "0.6"
+gedcomx_date = { git = "https://github.com/kod-kristoff/gedcomx-date-rs", branch = "main" }
 hashbrown = "0.14"
 json5 = "0.4.1"
 log = "0.4.17"
@@ -34,6 +35,7 @@ ratatui = "0.26"
 scraper = "0.18.1"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
+serde_with = { version = "3.6.1" }
 thiserror = "1.0.57"
 tracing = "0.1.40"
 tui-input = "0.8.0"
