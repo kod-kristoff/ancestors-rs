@@ -31,8 +31,8 @@ impl Fact {
         self
     }
 
-    pub fn place(mut self, place: PlaceReference) -> Self {
-        self.set_place(place);
+    pub fn place<P: Into<PlaceReference>>(mut self, place: P) -> Self {
+        self.set_place(place.into());
         self
     }
 

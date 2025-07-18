@@ -6,4 +6,5 @@ pub mod models;
 pub mod schema;
 mod sqlite_agent_repo;
 mod sqlite_document_repo;
+mod sqlite_household_repo;
 mod sqlite_person_repo;

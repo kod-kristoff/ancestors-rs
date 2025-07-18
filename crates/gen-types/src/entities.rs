@@ -14,6 +14,7 @@ mod family;
 mod household;
 mod person;
 mod place;
+mod place_relationship;
 mod relationship;
 pub mod shared;
 mod source;

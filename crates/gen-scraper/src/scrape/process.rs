@@ -1,10 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use hashbrown::{HashMap, HashSet};
 
 use gen_types::{
-    entities::PersonBody,
+    entities::{PersonBody, PlaceBody},
     shared::IriRef,
-    value_objects::{Fact, FactType, Identifier, IdentifierType},
-    Batch, Household, Person,
+    value_objects::{Date, Fact, FactType, Identifier, IdentifierType, MemberInfo},
+    Batch, Household, Person, Place,
 };
 // use gen_types::{conclusion::Person, Batch, Fact, FactType, Family};
 // use miette::IntoDiagnostic;
@@ -18,6 +18,7 @@ struct Context {
     to_visit: Vec<String>,
     persons: HashMap<String, Person>,
     households: HashMap<String, Household>,
+    places: HashMap<String, Place>,
 }
 // use persons::application::service::AddPerson;
 
@@ -125,7 +126,7 @@ fn extract_person(
                                 let body = PersonBody::default().identifier(new_ident);
                                 let new_person = Person::new(body, "scraper");
                                 curr_household.update_body("scraper", |body| {
-                                    body.add_member(new_person.id())
+                                    body.add_member(MemberInfo::with_id(new_person.id()))
                                 });
                                 ctx.persons.insert(ident.to_string(), new_person);
                             }
@@ -203,12 +204,32 @@ fn extract_person(
             dbg!(&ctx);
             // dbg!(&div_faltdata.text().collect::<String>());
         }
+        let birthplace = if let Some(födelseförsamling) = mapping.get("Födelseförsamling") {
+            ctx.places
+                .entry(födelseförsamling.to_string())
+                .or_insert_with(|| {
+                    Place::new(PlaceBody::new().original(födelseförsamling), "scraper")
+                });
+            ctx.places.get(födelseförsamling)
+        } else {
+            None
+        };
         new_person.update_body("scraper", |body| {
             dbg!(&mapping);
+            let mut birth = Fact::new(FactType::Birth);
+            if let Some(birthyear) = mapping.get("Födelseår") {
+                birth.set_date(Date::new().original(birthyear));
+            }
+            if let Some(birthplace) = birthplace {
+                birth.set_place(birthplace.into());
+            }
             let hemort = mapping.get("Hemort");
             let hemparish = mapping.get("Hemförsamling");
             let kontrkat = mapping.get("Kontrakt");
             let län = mapping.get("Län");
+            if let Some(yrke) = mapping.get("Yrke") {
+                body.add_fact(Fact::new(FactType::Occupation).value(yrke));
+            }
         });
     }
     Err(ProcessError::UnknownError("return something".into()))

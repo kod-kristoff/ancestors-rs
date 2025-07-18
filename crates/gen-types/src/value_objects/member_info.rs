@@ -33,6 +33,9 @@ impl<I> MemberInfo<I> {
     pub fn set_role(&mut self, role: Option<String>) {
         self.role = role;
     }
+    pub fn get_role(&self) -> Option<&str> {
+        self.role.as_deref()
+    }
     pub fn from<S: Into<GedcomxDate>>(mut self, from: S) -> Self {
         self.set_from(Some(from.into()));
         self
@@ -40,12 +43,18 @@ impl<I> MemberInfo<I> {
     pub fn set_from(&mut self, from: Option<GedcomxDate>) {
         self.from = from;
     }
+    pub fn get_from(&self) -> Option<&GedcomxDate> {
+        self.from.as_ref()
+    }
     pub fn to<S: Into<GedcomxDate>>(mut self, to: S) -> Self {
         self.set_to(Some(to.into()));
         self
     }
     pub fn set_to(&mut self, to: Option<GedcomxDate>) {
         self.to = to;
+    }
+    pub fn get_to(&self) -> Option<&GedcomxDate> {
+        self.to.as_ref()
     }
 }
 

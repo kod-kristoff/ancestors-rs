@@ -44,4 +44,12 @@ impl HouseholdBody {
     pub fn members(&self) -> &[MemberInfo<PersonId>] {
         &self.members
     }
+
+    pub fn facts(&self) -> &[Fact] {
+        &self.facts
+    }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
 }
