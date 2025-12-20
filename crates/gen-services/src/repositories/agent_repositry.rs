@@ -9,6 +9,5 @@ pub trait AgentRepository {
 #[derive(Debug, thiserror::Error, miette::Diagnostic)]
 pub enum AgentRepositoryError {
     #[error("Unknown error")]
-    #[diagnostic(transparent)]
-    Unknown(miette::Report),
+    Unknown(#[from] eyre::Report),
 }

@@ -15,3 +15,4 @@ hashbrown.workspace = true
 gen-types.workspace = true
 miette.workspace = true
 thiserror.workspace = true
+eyre.workspace = true

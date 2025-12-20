@@ -4,42 +4,27 @@ use diesel::{
     r2d2::{ConnectionManager, Pool},
     OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper, SqliteConnection,
 };
-use gen_services::repositories::{AgentRepository, SharedAgentRepository};
+use eyre::Context;
+use gen_services::repositories::{AgentRepository, AgentRepositoryError, SharedAgentRepository};
 use gen_types::{Agent, AgentId};
+use miette::IntoDiagnostic;
 
-use crate::models::{AgentInDb, NewAgent};
-
-type DbPool = Pool<ConnectionManager<SqliteConnection>>;
+use crate::{
+    models::{AgentInDb, NewAgent},
+    pool::DbPool,
+};
 
 pub struct SqliteAgentRepository {
-    read_pool: DbPool,
-    write_pool: DbPool,
+    db_pool: DbPool,
 }
 
 impl SqliteAgentRepository {
-    pub fn new(path: &str) -> Self {
-        let manager = ConnectionManager::new(path);
-
-        let read_pool = Pool::builder()
-            .max_size(5)
-            .build(manager)
-            .expect("sqlite_repo: build read_pool");
-
-        let manager = ConnectionManager::new(path);
-
-        let write_pool = Pool::builder()
-            .max_size(1)
-            .build(manager)
-            .expect("sqlite_repo: build write_pool");
-
-        Self {
-            read_pool,
-            write_pool,
-        }
+    pub fn new(db_pool: DbPool) -> Self {
+        Self { db_pool }
     }
 
-    pub fn arc_new(path: &str) -> SharedAgentRepository {
-        Arc::new(Self::new(path))
+    pub fn arc_new(db_pool: DbPool) -> SharedAgentRepository {
+        Arc::new(Self::new(db_pool))
     }
 }
 
@@ -49,7 +34,10 @@ impl AgentRepository for SqliteAgentRepository {
         id: &AgentId,
     ) -> Result<Option<Agent>, gen_services::repositories::AgentRepositoryError> {
         use crate::schema::agents::dsl::agents;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self
+            .db_pool
+            .read()
+            .wrap_err("failed to get read connection")?;
         let agent = agents
             .find(id.db_id())
             .select(AgentInDb::as_select())
@@ -58,7 +46,9 @@ impl AgentRepository for SqliteAgentRepository {
         dbg!(&agent);
         match agent {
             Ok(None) => Ok(None),
-            Ok(Some(agent)) => Ok(serde_json::from_str(&agent.body).unwrap()),
+            Ok(Some(agent)) => Ok(serde_json::from_str(&agent.body).wrap_err_with(|| {
+                format!("failed to deserialize agent body for id={}", &agent.id)
+            })?),
             Err(err) => {
                 todo!("handle error : {:?}", err)
             }
@@ -69,14 +59,19 @@ impl AgentRepository for SqliteAgentRepository {
         &self,
     ) -> Result<Vec<Agent>, gen_services::repositories::AgentRepositoryError> {
         use crate::schema::agents::dsl::agents;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self
+            .db_pool
+            .read()
+            .wrap_err("failed to get read connection")?;
         let all_agents = agents
             .select(AgentInDb::as_select())
             .load(&mut conn)
-            .unwrap();
+            .wrap_err("failed to load all agents")?;
         let mut result = Vec::new();
         for agent in all_agents {
-            result.push(serde_json::from_str(&agent.body).unwrap());
+            result.push(serde_json::from_str(&agent.body).wrap_err_with(|| {
+                format!("failed to deserialize agent body for id={}", &agent.id)
+            })?);
         }
         Ok(result)
     }
@@ -95,11 +90,14 @@ impl AgentRepository for SqliteAgentRepository {
             updated_by: agent.updated_by(),
         };
 
-        let mut conn = self.write_pool.get().unwrap();
+        let mut conn = self
+            .db_pool
+            .write()
+            .wrap_err("failed to get write connection")?;
         let agent = diesel::insert_into(agents::table)
             .values(&new_agent)
             .execute(&mut conn)
-            .unwrap();
+            .wrap_err_with(|| format!("failed to save agent with id={}", &agent.id()))?;
         dbg!(agent);
         Ok(())
     }

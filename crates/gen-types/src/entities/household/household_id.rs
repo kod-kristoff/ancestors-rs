@@ -1,6 +1,6 @@
 use id_ulid::{Id, Identifiable};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct HouseholdTag;
 
 impl Identifiable for HouseholdTag {

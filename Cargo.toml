@@ -22,6 +22,7 @@ config = { version = "0.14", default-features = false, features = [
 ] }
 crossterm = "0.27"
 diesel = { version = "2.2.4" }
+diesel_migrations = { version = "2.3.0"}
 env_logger = "0.11"
 eyre = "0.6"
 gedcomx_date = { git = "https://github.com/kod-kristoff/gedcomx-date-rs", branch = "main" }
@@ -31,6 +32,7 @@ log = "0.4.17"
 miette = "7.1.0"
 prodash = "28.0.0"
 oxiri = { version = "0.2.2", features = ["serde"] }
+r2d2 = "0.8.10"
 ratatui = "0.26"
 scraper = "0.18.1"
 serde = { version = "^1.0.99" }
