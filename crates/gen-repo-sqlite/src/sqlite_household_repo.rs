@@ -9,39 +9,22 @@ use gen_services::repositories::{
 };
 use gen_types::{Household, HouseholdId};
 
-use crate::models::{HouseholdInDb, NewHousehold, NewHouseholdMember};
-
-type DbPool = Pool<ConnectionManager<SqliteConnection>>;
+use crate::{
+    models::{HouseholdInDb, NewHousehold, NewHouseholdMember},
+    pool::DbPool,
+};
 
 pub struct SqliteHouseholdRepository {
-    read_pool: DbPool,
-    write_pool: DbPool,
+    db_pool: DbPool,
 }
 
 impl SqliteHouseholdRepository {
-    pub fn new(path: &str) -> Self {
-        let manager = ConnectionManager::new(path);
-
-        let read_pool = Pool::builder()
-            .max_size(5)
-            .build(manager)
-            .expect("sqlite_repo: build read_pool");
-
-        let manager = ConnectionManager::new(path);
-
-        let write_pool = Pool::builder()
-            .max_size(1)
-            .build(manager)
-            .expect("sqlite_repo: build write_pool");
-
-        Self {
-            read_pool,
-            write_pool,
-        }
+    pub fn new(db_pool: DbPool) -> Self {
+        Self { db_pool }
     }
 
-    pub fn arc_new(path: &str) -> SharedHouseholdRepository {
-        Arc::new(Self::new(path))
+    pub fn arc_new(db_pool: DbPool) -> SharedHouseholdRepository {
+        Arc::new(Self::new(db_pool))
     }
 }
 
@@ -51,7 +34,7 @@ impl HouseholdRepository for SqliteHouseholdRepository {
         id: &HouseholdId,
     ) -> Result<Option<Household>, gen_services::repositories::HouseholdRepositoryError> {
         use crate::schema::households::dsl::households;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self.db_pool.read().unwrap();
         let household = households
             .find(id.db_id())
             .select(HouseholdInDb::as_select())
@@ -74,7 +57,7 @@ impl HouseholdRepository for SqliteHouseholdRepository {
         &self,
     ) -> Result<Vec<Household>, gen_services::repositories::HouseholdRepositoryError> {
         use crate::schema::households::dsl::households;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self.db_pool.read().unwrap();
         let all_households = households
             .select(HouseholdInDb::as_select())
             .load(&mut conn)
@@ -99,6 +82,7 @@ impl HouseholdRepository for SqliteHouseholdRepository {
         let id = household.id().db_id();
         let name = household.body().get_name();
         let body = serde_json::to_string(&household.body().facts()).unwrap();
+        dbg!(&body);
         let new_household = NewHousehold {
             id: &id,
             name,
@@ -117,7 +101,7 @@ impl HouseholdRepository for SqliteHouseholdRepository {
             })
         }
 
-        let mut conn = self.write_pool.get().unwrap();
+        let mut conn = self.db_pool.write().unwrap();
         let household = diesel::insert_into(households::table)
             .values(&new_household)
             .execute(&mut conn)

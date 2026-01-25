@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use diesel::{
     r2d2::{ConnectionManager, Pool, PooledConnection},
     SqliteConnection,
@@ -5,6 +7,7 @@ use diesel::{
 use eyre::Context;
 use r2d2;
 
+#[derive(Debug, Clone)]
 pub struct DbPool {
     read_pool: Pool<ConnectionManager<SqliteConnection>>,
     write_pool: Pool<ConnectionManager<SqliteConnection>>,

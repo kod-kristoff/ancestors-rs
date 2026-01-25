@@ -1,45 +1,25 @@
 use std::sync::Arc;
 
-use diesel::{
-    r2d2::{ConnectionManager, Pool},
-    OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper, SqliteConnection,
-};
+use diesel::{OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper};
 use gen_services::repositories::{DocumentRepository, SharedDocumentRepository};
 use gen_types::{Document, DocumentId};
 
-use crate::models::{DocumentInDb, NewDocument};
-
-type DbPool = Pool<ConnectionManager<SqliteConnection>>;
+use crate::{
+    models::{DocumentInDb, NewDocument},
+    pool::DbPool,
+};
 
 pub struct SqliteDocumentRepository {
-    read_pool: DbPool,
-    write_pool: DbPool,
+    db_pool: DbPool,
 }
 
 impl SqliteDocumentRepository {
-    pub fn new(path: &str) -> Self {
-        let manager = ConnectionManager::new(path);
-
-        let read_pool = Pool::builder()
-            .max_size(5)
-            .build(manager)
-            .expect("sqlite_repo: build read_pool");
-
-        let manager = ConnectionManager::new(path);
-
-        let write_pool = Pool::builder()
-            .max_size(1)
-            .build(manager)
-            .expect("sqlite_repo: build write_pool");
-
-        Self {
-            read_pool,
-            write_pool,
-        }
+    pub fn new(db_pool: DbPool) -> Self {
+        Self { db_pool }
     }
 
-    pub fn arc_new(path: &str) -> SharedDocumentRepository {
-        Arc::new(Self::new(path))
+    pub fn arc_new(db_pool: DbPool) -> SharedDocumentRepository {
+        Arc::new(Self::new(db_pool))
     }
 }
 
@@ -49,7 +29,7 @@ impl DocumentRepository for SqliteDocumentRepository {
         id: &DocumentId,
     ) -> Result<Option<Document>, gen_services::repositories::DocumentRepositoryError> {
         use crate::schema::documents::dsl::documents;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self.db_pool.read().unwrap();
         let document = documents
             .find(id.db_id())
             .select(DocumentInDb::as_select())
@@ -69,7 +49,7 @@ impl DocumentRepository for SqliteDocumentRepository {
         &self,
     ) -> Result<Vec<Document>, gen_services::repositories::DocumentRepositoryError> {
         use crate::schema::documents::dsl::documents;
-        let mut conn = self.read_pool.get().unwrap();
+        let mut conn = self.db_pool.read().unwrap();
         let all_documents = documents
             .select(DocumentInDb::as_select())
             .load(&mut conn)
@@ -95,7 +75,7 @@ impl DocumentRepository for SqliteDocumentRepository {
             updated_by: document.updated_by(),
         };
 
-        let mut conn = self.write_pool.get().unwrap();
+        let mut conn = self.db_pool.write().unwrap();
         let document = diesel::insert_into(documents::table)
             .values(&new_document)
             .execute(&mut conn)

@@ -1,3 +1,7 @@
+use gen_repo_sqlite::{
+    SqliteAgentRepository, SqliteDocumentRepository, SqliteHouseholdRepository,
+    SqlitePersonRepository, migrations::run_migrations, pool::DbPool,
+};
 use gen_services::{
     repositories::{
         SharedAgentRepository, SharedDocumentRepository, SharedHouseholdRepository,
@@ -6,9 +10,11 @@ use gen_services::{
     },
     service::Service,
 };
+use tempfile::TempDir;
 
-#[derive(Clone)]
+// #[derive(Clone)]
 pub struct TestContext {
+    pub workdir: TempDir,
     pub service: Service,
     pub agent_repo: SharedAgentRepository,
     pub document_repo: SharedDocumentRepository,
@@ -16,24 +22,32 @@ pub struct TestContext {
     pub person_repo: SharedPersonRepository,
 }
 
-impl Default for TestContext {
-    fn default() -> Self {
-        let agent_repo = InMemoryAgentRepo::arc_new();
-        let document_repo = InMemoryDocumentRepo::arc_new();
-        let household_repo = InMemoryHouseholdRepo::arc_new();
-        let person_repo = InMemoryPersonRepo::arc_new();
+impl TestContext {
+    pub fn new() -> eyre::Result<Self> {
+        let workdir = TempDir::new()?;
+        let db_path = workdir.path().join("test.db").display().to_string();
+        let db_pool = DbPool::new(&db_path)?;
+        {
+            let mut conn = db_pool.write()?;
+            run_migrations(&mut conn).expect("test_suite/context: running migrations");
+        }
+        let agent_repo = SqliteAgentRepository::arc_new(db_pool.clone());
+        let document_repo = SqliteDocumentRepository::arc_new(db_pool.clone());
+        let household_repo = SqliteHouseholdRepository::arc_new(db_pool.clone());
+        let person_repo = SqlitePersonRepository::arc_new(db_pool.clone());
         let service = Service::new(
             agent_repo.clone(),
             document_repo.clone(),
             household_repo.clone(),
             person_repo.clone(),
         );
-        TestContext {
+        Ok(TestContext {
+            workdir,
             service,
             agent_repo,
             document_repo,
             household_repo,
             person_repo,
-        }
+        })
     }
 }

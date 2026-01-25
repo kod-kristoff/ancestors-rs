@@ -1,5 +1,6 @@
 pub use crate::sqlite_agent_repo::SqliteAgentRepository;
 pub use crate::sqlite_document_repo::SqliteDocumentRepository;
+pub use crate::sqlite_household_repo::SqliteHouseholdRepository;
 pub use crate::sqlite_person_repo::SqlitePersonRepository;
 
 pub mod migrations;

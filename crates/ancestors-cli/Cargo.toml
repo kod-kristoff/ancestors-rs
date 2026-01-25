@@ -5,6 +5,12 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "ancestors-cli"
+path = "src/bin/main.rs"
+doctest = false
+test = false
+
 [dependencies]
 # chrono.workspace = true
 prodash = { workspace = true, features = [
