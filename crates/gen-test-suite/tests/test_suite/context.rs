@@ -6,7 +6,6 @@ use gen_services::{
     repositories::{
         SharedAgentRepository, SharedDocumentRepository, SharedHouseholdRepository,
         SharedPersonRepository,
-        mem::{InMemoryAgentRepo, InMemoryDocumentRepo, InMemoryHouseholdRepo, InMemoryPersonRepo},
     },
     service::Service,
 };
