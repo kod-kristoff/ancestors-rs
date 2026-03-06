@@ -26,5 +26,8 @@ fn adding_household_succeeds() -> eyre::Result<()> {
         }
     }
     assert!(found_person, "Did not find '{person_id}' among members");
+
+    let actual = ctx.household_repo.get_all_households()?;
+    assert_eq!(actual, &[household]);
     Ok(())
 }

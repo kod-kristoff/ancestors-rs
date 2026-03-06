@@ -23,6 +23,20 @@ pub struct HouseholdBody {
 
 // Builder lite
 impl HouseholdBody {
+    pub fn with_name(name: String) -> Self {
+        Self {
+            name,
+            members: Vec::new(),
+            facts: Vec::new(),
+        }
+    }
+    pub fn new(name: String, members: Vec<MemberInfo<PersonId>>, facts: Vec<Fact>) -> Self {
+        Self {
+            name,
+            members,
+            facts,
+        }
+    }
     pub fn member(mut self, member: MemberInfo<PersonId>) -> Self {
         self.add_member(member);
         self

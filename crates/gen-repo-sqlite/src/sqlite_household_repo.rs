@@ -1,17 +1,24 @@
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
+use chrono::NaiveDateTime;
 use diesel::{
     r2d2::{ConnectionManager, Pool},
-    OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper, SqliteConnection,
+    ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper,
+    SqliteConnection,
 };
 use gen_services::repositories::{
     HouseholdRepository, HouseholdRepositoryError, SharedHouseholdRepository,
 };
-use gen_types::{Household, HouseholdId};
+use gen_types::{
+    entities::HouseholdBody,
+    gedcomx_date_from_str,
+    value_objects::{Fact, MemberInfo},
+    GedcomxDate, Household, HouseholdId, PersonId,
+};
 
 use crate::{
-    models::{HouseholdInDb, NewHousehold, NewHouseholdMember},
-    pool::DbPool,
+    models::{HouseholdInDb, HouseholdMemberInDb, NewHousehold, NewHouseholdMember},
+    pool::{DbConnection, DbPool},
 };
 
 pub struct SqliteHouseholdRepository {
@@ -26,6 +33,54 @@ impl SqliteHouseholdRepository {
     pub fn arc_new(db_pool: DbPool) -> SharedHouseholdRepository {
         Arc::new(Self::new(db_pool))
     }
+
+    fn load_household(
+        &self,
+        HouseholdInDb {
+            id,
+            name,
+            body,
+            updated,
+            updated_by,
+        }: HouseholdInDb,
+        conn: &mut DbConnection,
+    ) -> Result<Household, HouseholdRepositoryError> {
+        use crate::schema::household_members;
+        let members_in_db: Vec<HouseholdMemberInDb> = household_members::table
+            .filter(household_members::household_id.eq(&id))
+            .load(conn)
+            .map_err(|err| {
+                HouseholdRepositoryError::Unknown(
+                    miette::Report::msg(err).wrap_err("Selecting from household_members failed."),
+                )
+            })?;
+        let mut members = Vec::with_capacity(members_in_db.len());
+        for member_in_db in members_in_db {
+            let HouseholdMemberInDb {
+                household_id,
+                person_id,
+                role,
+                from_date,
+                to_date,
+            } = member_in_db;
+            let person_id = PersonId::from_db_id(&person_id).unwrap();
+            let from = from_date
+                .as_ref()
+                .map(|date| gedcomx_date_from_str(date).unwrap());
+            let to = to_date
+                .as_ref()
+                .map(|date| gedcomx_date_from_str(date).unwrap());
+            let member = MemberInfo::new(person_id, role, from, to);
+            members.push(member);
+        }
+        let facts: Vec<Fact> = serde_json::from_str(&body).unwrap();
+
+        let body = HouseholdBody::new(name, members, facts);
+        let id = HouseholdId::from_db_id(&id).unwrap();
+        let updated = updated.and_utc();
+        let household = Household::reconstruct(id, body, updated, updated_by);
+        Ok(household)
+    }
 }
 
 impl HouseholdRepository for SqliteHouseholdRepository {
@@ -33,9 +88,10 @@ impl HouseholdRepository for SqliteHouseholdRepository {
         &self,
         id: &HouseholdId,
     ) -> Result<Option<Household>, gen_services::repositories::HouseholdRepositoryError> {
-        use crate::schema::households::dsl::households;
+        use crate::schema::households;
+
         let mut conn = self.db_pool.read().unwrap();
-        let household = households
+        let household = households::table
             .find(id.db_id())
             .select(HouseholdInDb::as_select())
             .first(&mut conn)
@@ -46,8 +102,9 @@ impl HouseholdRepository for SqliteHouseholdRepository {
                 )
             })?;
         dbg!(&household);
-        if let Some(household) = household {
-            Ok(serde_json::from_str(&household.body).unwrap())
+        if let Some(household_in_db) = household {
+            let household = self.load_household(household_in_db, &mut conn)?;
+            Ok(Some(household))
         } else {
             Ok(None)
         }
@@ -58,7 +115,7 @@ impl HouseholdRepository for SqliteHouseholdRepository {
     ) -> Result<Vec<Household>, gen_services::repositories::HouseholdRepositoryError> {
         use crate::schema::households::dsl::households;
         let mut conn = self.db_pool.read().unwrap();
-        let all_households = households
+        let households_in_db = households
             .select(HouseholdInDb::as_select())
             .load(&mut conn)
             .map_err(|err| {
@@ -66,9 +123,10 @@ impl HouseholdRepository for SqliteHouseholdRepository {
                     miette::Report::msg(err).wrap_err("Selecting into household_members failed."),
                 )
             })?;
-        let mut result = Vec::new();
-        for household in all_households {
-            result.push(serde_json::from_str(&household.body).unwrap());
+        let mut result = Vec::with_capacity(households_in_db.len());
+        for household_in_db in households_in_db {
+            let household = self.load_household(household_in_db, &mut conn)?;
+            result.push(household);
         }
         Ok(result)
     }
@@ -81,12 +139,12 @@ impl HouseholdRepository for SqliteHouseholdRepository {
 
         let id = household.id().db_id();
         let name = household.body().get_name();
-        let body = serde_json::to_string(&household.body().facts()).unwrap();
-        dbg!(&body);
+        let facts = serde_json::to_string(&household.body().facts()).unwrap();
+        dbg!(&facts);
         let new_household = NewHousehold {
             id: &id,
             name,
-            body: &body,
+            body: &facts,
             updated: household.updated().naive_utc(),
             updated_by: household.updated_by(),
         };

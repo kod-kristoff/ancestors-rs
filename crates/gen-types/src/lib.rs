@@ -6,6 +6,7 @@ pub use entities::{
     {SourceCitation, SourceDescription, SourceId, SourceReference},
 };
 pub use error::{Error, Result};
+pub use gedcomx_date::parse as gedcomx_date_from_str;
 pub use gedcomx_date::GedcomxDate;
 
 mod batch;

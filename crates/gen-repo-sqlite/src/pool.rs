@@ -1,11 +1,11 @@
-use std::path::Path;
-
 use diesel::{
     r2d2::{ConnectionManager, Pool, PooledConnection},
     SqliteConnection,
 };
 use eyre::Context;
 use r2d2;
+
+pub type DbConnection = PooledConnection<ConnectionManager<SqliteConnection>>;
 
 #[derive(Debug, Clone)]
 pub struct DbPool {
