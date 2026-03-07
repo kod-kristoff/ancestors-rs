@@ -1,5 +1,6 @@
 use id_ulid::{Id, Identifiable};
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PersonTag;
 
 impl Identifiable for PersonTag {

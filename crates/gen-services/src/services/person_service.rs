@@ -1,12 +1,7 @@
 use gen_types::{Person, PersonId};
 
-use crate::repositories::SharedPersonRepository;
-
-use super::UseCaseResult;
-
 #[derive(Debug, Clone)]
 pub struct AddPerson {
-    pub id: PersonId,
     pub extracted: bool,
     pub name: Option<String>,
 }
@@ -14,7 +9,6 @@ pub struct AddPerson {
 impl Default for AddPerson {
     fn default() -> Self {
         Self {
-            id: PersonId::default(),
             name: None,
             extracted: true,
         }
@@ -42,37 +36,16 @@ impl Default for UpsertPerson {
         }
     }
 }
-
-pub struct PersonService {
-    repo: SharedPersonRepository,
+pub trait PersonService {
+    fn add_person(&self, user: &str, person: &AddPerson) -> Result<Person, AddPersonError>;
+    fn add_person_raw(&self, user: &str, person: Person) -> Result<Person, AddPersonError>;
 }
 
-impl PersonService {
-    pub fn new(repo: SharedPersonRepository) -> Self {
-        Self { repo }
-    }
-}
-
-impl PersonService {
-    pub fn add(&self, cmd: &AddPerson) -> UseCaseResult<()> {
-        let mut person = Person::new(cmd.id);
-        if let Some(name) = &cmd.name {
-            person = person.name(name.as_str());
-        }
-        // person.set_extracted(cmd.extracted);
-        self.repo.save(person).unwrap();
-        Ok(())
-    }
-
-    pub fn edit(&self, cmd: &EditPerson) -> UseCaseResult<()> {
-        let person = Person::new(cmd.id);
-        // if let Some(name) = &cmd.name {
-        //     person = person.name(name.as_str());
-        // }
-        // person.set_extracted(cmd.extracted);
-        self.repo.save(person).unwrap();
-        Ok(())
-    }
+#[derive(Debug, thiserror::Error, miette::Diagnostic)]
+pub enum AddPersonError {
+    #[error("Unknown error")]
+    #[diagnostic(transparent)]
+    Unknown(miette::Report),
 }
 
 #[derive(Debug, Clone)]
@@ -85,12 +58,9 @@ pub struct EditPerson {
 impl From<Person> for EditPerson {
     fn from(value: Person) -> Self {
         Self {
-            id: *value.id(),
+            id: value.id(),
             // name: None,
             // extracted: true,
         }
     }
 }
-
-#[cfg(test)]
-mod tests;

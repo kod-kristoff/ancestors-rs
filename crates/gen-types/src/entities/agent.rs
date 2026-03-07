@@ -1,35 +1,37 @@
 use std::fmt;
-mod agent_id;
-mod agent_reference;
 
 pub use agent_id::AgentId;
-pub use agent_reference::AgentReference;
+use agent_id::AgentTag;
+pub type AgentReference = IdReference<AgentId>;
+pub type Agent = Entity<AgentTag, AgentBody>;
 
 use crate::{
-    shared::IriRef,
+    shared::{IdReference, IriRef},
     value_objects::{ResourceReference, TextValue},
     Result,
 };
 
+use super::shared::Entity;
+
+mod agent_id;
+
 #[derive(Debug, Default, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
-pub struct Agent {
+pub struct AgentBody {
     names: Vec<TextValue>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     emails: Vec<ResourceReference>,
-    id: AgentId,
 }
 
-impl Agent {
-    pub fn new(id: AgentId) -> Self {
+impl AgentBody {
+    pub fn new() -> Self {
         Self {
-            id,
             names: Vec::new(),
             emails: Vec::new(),
         }
     }
 }
 
-impl Agent {
+impl AgentBody {
     // pub fn id<S: Into<String>>(mut self, id: S) -> Self {
     //     self.set_id(id.into());
     //     self
@@ -52,7 +54,7 @@ impl Agent {
         Ok(self)
     }
 }
-impl Agent {
+impl AgentBody {
     // pub fn set_id(&mut self, id: String) {
     //     self.id = id;
     // }
@@ -80,7 +82,7 @@ impl Agent {
 // }
 impl From<&Agent> for AgentReference {
     fn from(value: &Agent) -> Self {
-        Self::new(value.id)
+        Self::new(value.id())
     }
 }
 

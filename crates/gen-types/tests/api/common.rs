@@ -8,22 +8,29 @@
 
 use chrono::{DateTime, Utc};
 use gen_types::{
+    entities::{AgentBody, DocumentBody, PersonBody, PlaceBody},
     value_objects::{
         Attribution, Date, Fact, FactType, Gender, Identifier, IdentifierType, ResourceType,
     },
-    Agent, Batch, Document, Person, PlaceReference, Relationship, RelationshipType, SourceCitation,
-    SourceDescription,
+    Agent, Batch, Document, Person, Place, PlaceReference, Relationship, RelationshipType,
+    SourceCitation, SourceDescription,
 };
 
 // pub fn iri(s: &str) -> IriRef {
 //     IriRef::parse(s.into()).expect("parse iri")
 // }
 pub fn emma_bocock_example() -> eyre::Result<Batch> {
-    let contributor = Agent::default()
-        .name("Jane Doe")
-        .try_email("example@example.org")
-        .expect("email");
-    let repository = Agent::default().name("General Registry Office, Southport");
+    let contributor = Agent::new(
+        AgentBody::default()
+            .name("Jane Doe")
+            .try_email("example@example.org")
+            .expect("email"),
+        "user@example.com",
+    );
+    let repository = Agent::new(
+        AgentBody::default().name("General Registry Office, Southport"),
+        "user@example.com",
+    );
     let attribution = Attribution::new().contributor(&contributor).modified(
         "2014-03-07T00:00:00-07:00"
             .parse::<DateTime<Utc>>()
@@ -36,33 +43,40 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
       .resource_type(ResourceType::PhysicalArtifact)
       .created("1843-07-27T00:00:00-07:00".parse::<DateTime<Utc>>().expect("failed"))
       .repository(&repository);
+    let birthplace = Place::new(
+        PlaceBody::new().original(
+            "Broadfield Bar, Abbeydale Road, Ecclesall-Bierlow, York, England, United Kingdom",
+        ),
+        "user@example.com",
+    );
     let birth = Fact::new(FactType::Birth)
         .date(Date::new().original("23 June 1843"))
-        .place(PlaceReference::new().original(
-            "Broadfield Bar, Abbeydale Road, Ecclesall-Bierlow, York, England, United Kingdom",
-        ));
+        .place(&birthplace);
     let mut emma_ident = Identifier::new(
         IdentifierType::Primary,
         "http://gedcomx.org/example#P-1".parse()?,
     );
     emma_ident.set_namespace("http://gedcomx.org".parse()?);
     emma_ident.set_id("#P-1".parse()?);
-    let emma = Person::default()
+    let emma = PersonBody::default()
         // .extracted(true)
         .source(&source_description)
         .name("Emma Bocock")
         .gender(Gender::Female)
         .identifier(emma_ident)
         .fact(birth);
-    let father = Person::default() //new(iri("#P-2"))
+    let emma = Person::new(emma, "user");
+    let father = PersonBody::default() //new(iri("#P-2"))
         // .extracted(true)
         .source(&source_description)
         .name("William Bocock")
         .fact(Fact::new(FactType::Occupation).value("Toll Collector"));
-    let mother = Person::default() //:new(iri("#P-3"))
+    let father = Person::new(father, "user");
+    let mother = PersonBody::default() //:new(iri("#P-3"))
         // .extracted(true)
         .source(&source_description)
         .name("Sarah Bocock formerly Brough");
+    let mother = Person::new(mother, "user");
     let father_relationship = Relationship::new(RelationshipType::ParentChild)
         .person1(&father)
         .person2(&emma);
@@ -71,8 +85,12 @@ pub fn emma_bocock_example() -> eyre::Result<Batch> {
         .person1(&mother)
         .person2(&emma);
 
-    let analysis = Document::default().text("...Jane Doe's analysis document...");
-    let emma_conclusion = Person::default().evidence(&emma).analysis(&analysis);
+    let analysis = Document::new(
+        DocumentBody::default().text("...Jane Doe's analysis document..."),
+        "user",
+    );
+    let emma_conclusion = PersonBody::default().evidence(&emma).analysis(&analysis);
+    let emma_conclusion = Person::new(emma_conclusion, "user");
     // // GedcomX::new()
     Ok(Batch::new()
         .agent(contributor)

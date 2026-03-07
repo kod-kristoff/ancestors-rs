@@ -1,28 +1,30 @@
 mod document_id;
 pub use document_id::DocumentId;
-pub type DocumentReference = IdReference<DocumentId>;
+use document_id::DocumentTag;
 
 use crate::shared::IdReference;
 
+use super::shared::Entity;
+
 /// An abstract document that contains derived (conclusionary) text -- for example, a transcription or researcher analysis.
+pub type Document = Entity<DocumentTag, DocumentBody>;
+pub type DocumentReference = IdReference<DocumentId>;
 
 #[derive(Debug, Default, Clone, PartialEq, serde::Deserialize, serde::Serialize)]
-pub struct Document {
+pub struct DocumentBody {
     text: String,
-    id: DocumentId,
 }
 
-impl Document {
-    pub fn new(id: DocumentId) -> Self {
+impl DocumentBody {
+    pub fn new() -> Self {
         Self {
-            id,
             text: String::new(),
         }
     }
 }
 
 // Builder lite
-impl Document {
+impl DocumentBody {
     // pub fn id<S: Into<String>>(mut self, id: S) -> Self {
     //     self.set_id(id.into());
     //     self
@@ -33,7 +35,7 @@ impl Document {
     }
 }
 
-impl Document {
+impl DocumentBody {
     // pub fn set_id(&mut self, id: String) {
     //     self.id = id;
     // }
@@ -50,7 +52,7 @@ impl Document {
 
 impl From<&Document> for DocumentReference {
     fn from(doc: &Document) -> Self {
-        DocumentReference::new(doc.id)
+        DocumentReference::new(doc.id())
     }
 }
 

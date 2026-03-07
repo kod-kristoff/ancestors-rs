@@ -31,12 +31,27 @@ impl MemGedcomxPersonRepo {
 }
 
 impl PersonRepository for MemGedcomxPersonRepo {
-    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
+    fn get_person(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
         Ok(self.storage.0.read().expect("").get(id).cloned())
     }
 
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
-        self.storage.0.write().unwrap().insert(*person.id(), person);
+    fn get_all_persons(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+        Ok(self
+            .storage
+            .0
+            .read()
+            .expect("valid lock")
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    fn save_person(&self, person: &Person) -> Result<(), PersonRepositoryError> {
+        self.storage
+            .0
+            .write()
+            .unwrap()
+            .insert(person.id(), person.clone());
         Ok(())
     }
 }

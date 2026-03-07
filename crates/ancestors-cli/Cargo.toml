@@ -5,6 +5,12 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "ancestors-cli"
+path = "src/bin/main.rs"
+doctest = false
+test = false
+
 [dependencies]
 # chrono.workspace = true
 prodash = { workspace = true, features = [
@@ -20,5 +26,8 @@ xflags.workspace = true
 # local deps
 gen-scraper.workspace = true
 anc-trace.workspace = true
+gen-repo-sqlite = { workspace = true }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-forest = "0.1.6"
+gen-services.workspace = true
+serde_json.workspace = true

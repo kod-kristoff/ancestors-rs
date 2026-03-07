@@ -21,15 +21,25 @@ impl InMemoryPersonRepo {
 }
 
 impl PersonRepository for InMemoryPersonRepo {
-    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
+    fn get_person(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError> {
         Ok(self.storage.read().expect("").get(id).cloned())
     }
 
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError> {
+    fn get_all_persons(&self) -> Result<Vec<Person>, PersonRepositoryError> {
+        Ok(self
+            .storage
+            .read()
+            .expect("unpoisoned lock")
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    fn save_person(&self, person: &Person) -> Result<(), PersonRepositoryError> {
         self.storage
             .write()
             .unwrap()
-            .insert(*person.id(), person.clone());
+            .insert(person.id(), person.clone());
         Ok(())
     }
 }

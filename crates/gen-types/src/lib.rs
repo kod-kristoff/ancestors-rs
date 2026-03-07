@@ -1,14 +1,16 @@
-mod batch;
-pub mod entities;
-mod error;
-pub mod shared;
-pub mod value_objects;
-
 pub use batch::Batch;
 pub use entities::{
-    PlaceReference, {Agent, AgentId}, {Document, DocumentId, DocumentReference},
+    Place, PlaceId, PlaceReference, {Agent, AgentId}, {Document, DocumentId, DocumentReference},
     {Family, FamilyId}, {Household, HouseholdId}, {Person, PersonId, PersonReference},
     {Relationship, RelationshipId, RelationshipReference, RelationshipType},
     {SourceCitation, SourceDescription, SourceId, SourceReference},
 };
 pub use error::{Error, Result};
+pub use gedcomx_date::parse as gedcomx_date_from_str;
+pub use gedcomx_date::GedcomxDate;
+
+mod batch;
+pub mod entities;
+mod error;
+pub mod shared;
+pub mod value_objects;

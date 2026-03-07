@@ -1,0 +1,19 @@
+[package]
+name = "gen-test-suite"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+doctest = false
+
+[dependencies]
+gen-repo-sqlite.workspace = true
+gen-services.workspace = true
+gen-types.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+eyre.workspace = true
+tempfile = "3.23.0"

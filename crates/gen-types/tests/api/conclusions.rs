@@ -9,14 +9,14 @@ mod persons {
         let gedcom = emma_bocock_example()?;
         let emma = &gedcom.persons()[0];
         assert_eq!(
-            emma.names()[0].name_forms()[0].get_full_text(),
+            emma.body().names()[0].name_forms()[0].get_full_text(),
             "Emma Bocock"
         );
-        assert!(emma.is_extracted());
-        assert_eq!(emma.facts()[0].r#type(), FactType::Birth);
+        assert!(emma.body().is_extracted());
+        assert_eq!(emma.body().facts()[0].r#type(), FactType::Birth);
         let emma_conclusion = &gedcom.persons()[3];
-        assert_eq!(emma_conclusion.evidences()[0], emma.id());
-        assert!(!emma_conclusion.is_extracted());
+        assert_eq!(emma_conclusion.body().evidences()[0], emma.id());
+        assert!(!emma_conclusion.body().is_extracted());
         Ok(())
     }
 
@@ -27,13 +27,14 @@ mod persons {
             .persons()
             .iter()
             .find(|p| {
-                p.identifiers()
+                p.body()
+                    .identifiers()
                     .iter()
                     .any(|i| i.namespace() == Some("http://gedcomx.org") && i.id() == Some("#P-1"))
             })
             .unwrap();
         assert_eq!(
-            emma.names()[0].name_forms()[0].get_full_text(),
+            emma.body().names()[0].name_forms()[0].get_full_text(),
             "Emma Bocock"
         );
         Ok(())

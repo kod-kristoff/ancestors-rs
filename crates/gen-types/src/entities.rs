@@ -1,19 +1,20 @@
+pub use agent::{Agent, AgentBody, AgentId, AgentReference};
+// pub use batch::Batch;
+pub use document::{Document, DocumentBody, DocumentId, DocumentReference};
+pub use family::{Family, FamilyId};
+pub use household::{Household, HouseholdBody, HouseholdId};
+pub use person::{Person, PersonBody, PersonId, PersonReference};
+pub use place::{Place, PlaceBody, PlaceId, PlaceReference};
+pub use relationship::{Relationship, RelationshipId, RelationshipReference, RelationshipType};
+pub use source::{SourceCitation, SourceDescription, SourceId, SourceReference};
+
 mod agent;
 mod document;
 mod family;
 mod household;
 mod person;
 mod place;
+mod place_relationship;
 mod relationship;
 pub mod shared;
 mod source;
-
-pub use agent::{Agent, AgentId, AgentReference};
-// pub use batch::Batch;
-pub use document::{Document, DocumentId, DocumentReference};
-pub use family::{Family, FamilyId};
-pub use household::{Household, HouseholdId};
-pub use person::{Person, PersonId, PersonReference};
-pub use place::PlaceReference;
-pub use relationship::{Relationship, RelationshipId, RelationshipReference, RelationshipType};
-pub use source::{SourceCitation, SourceDescription, SourceId, SourceReference};

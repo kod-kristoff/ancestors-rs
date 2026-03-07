@@ -1,27 +1,14 @@
-use std::{error, fmt};
-
 use gen_types::{Person, PersonId};
 
 pub trait PersonRepository {
-    fn get(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError>;
-    fn save(&self, person: Person) -> Result<(), PersonRepositoryError>;
+    fn get_person(&self, id: &PersonId) -> Result<Option<Person>, PersonRepositoryError>;
+    fn get_all_persons(&self) -> Result<Vec<Person>, PersonRepositoryError>;
+    fn save_person(&self, person: &Person) -> Result<(), PersonRepositoryError>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error, miette::Diagnostic)]
 pub enum PersonRepositoryError {
-    PersonNotFound(PersonId),
-}
-
-impl fmt::Display for PersonRepositoryError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::PersonNotFound(id) => write!(f, "Person '{id}' not found"),
-        }
-    }
-}
-
-impl error::Error for PersonRepositoryError {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        None
-    }
+    #[error("Unknown error")]
+    #[diagnostic(transparent)]
+    Unknown(miette::Report),
 }
