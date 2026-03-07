@@ -29,3 +29,5 @@ anc-trace.workspace = true
 gen-repo-sqlite = { workspace = true }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-forest = "0.1.6"
+gen-services.workspace = true
+serde_json.workspace = true

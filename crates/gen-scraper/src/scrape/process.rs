@@ -13,43 +13,52 @@ use scraper::{Html, Selector};
 use crate::ProcessError;
 
 #[derive(Debug, Clone, Default)]
-struct Context {
+pub struct Context {
     visited_urls: HashSet<String>,
     to_visit: Vec<String>,
     persons: HashMap<String, Person>,
     households: HashMap<String, Household>,
     places: HashMap<String, Place>,
 }
+
+impl Context {
+    pub fn with_start_urls(start_urls: Vec<String>) -> Self {
+        Self {
+            to_visit: start_urls,
+            ..Default::default()
+        }
+    }
+
+    pub fn next_url(&mut self) -> Option<String> {
+        self.to_visit.pop()
+    }
+}
 // use persons::application::service::AddPerson;
 
-pub fn process(batch: &mut Batch, url: &str, src: &str) -> Result<(), ProcessError> {
-    let mut ctx = Context::default();
+pub fn process(ctx: &mut Context, url: &str, src: &str) -> Result<(), ProcessError> {
     let html = Html::parse_document(src);
     // dbg!(&html);
 
-    let ident = parse_ident(url);
+    let ident = parse_ident(url).unwrap();
     dbg!(&ident);
     let riksarkivet_ns = Some(NS_RIKSARKIVET);
-    let curr_person_opt: Option<&mut Person> = batch.persons_mut().iter_mut().find(|p| {
-        p.body()
-            .identifiers()
-            .iter()
-            .any(|i| i.namespace() == riksarkivet_ns && i.id() == ident)
-    });
+    let curr_person_opt: Option<Person> = ctx.persons.remove(ident);
+    // batch.persons_mut().iter_mut().find(|p| {
+    //     p.body()
+    //         .identifiers()
+    //         .iter()
+    //         .any(|i| i.namespace() == riksarkivet_ns && i.id() == ident)
+    // });
     dbg!(&curr_person_opt);
-    if let Some(person) = curr_person_opt {
-        let mut curr_household = Household::default();
-        extract_person(&mut ctx, person, &mut curr_household, &html)?;
-    } else {
-        let mut new_person = Person::default();
-        let mut curr_household = Household::default();
-        extract_person(&mut ctx, &mut new_person, &mut curr_household, &html)?;
-    }
+    let mut person = curr_person_opt.unwrap_or_else(Person::default);
+    let mut curr_household = Household::default();
+    extract_person(ctx, &mut person, &mut curr_household, &html)?;
+    ctx.persons.insert(ident.to_string(), person);
     Ok(())
 }
 
-const BASE_URL: &'static str = "https://sok.riksarkivet.se";
-const NS_RIKSARKIVET: &'static str = "http://riksarkivet.se";
+const BASE_URL: &str = "https://sok.riksarkivet.se";
+const NS_RIKSARKIVET: &str = "http://riksarkivet.se";
 
 fn extract_person(
     ctx: &mut Context,
@@ -232,7 +241,10 @@ fn extract_person(
             }
         });
     }
-    Err(ProcessError::UnknownError("return something".into()))
+    dbg!(&ctx);
+    dbg!(&curr_household);
+    Ok(())
+    // Err(ProcessError::UnknownError("return something".into()))
 }
 
 fn parse_ident(url: &str) -> Option<&str> {
