@@ -20,7 +20,7 @@ config = { version = "0.14", default-features = false, features = [
     "json5_rs",
     "json5",
 ] }
-crossterm = "0.27"
+crossterm = "0.29"
 diesel = { version = "2.2.4" }
 diesel_migrations = { version = "2.3.0"}
 env_logger = "0.11"
