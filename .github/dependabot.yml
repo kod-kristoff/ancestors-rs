@@ -26,5 +26,3 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    cooldown:
-      default-days: 7
