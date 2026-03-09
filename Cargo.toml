@@ -5,8 +5,8 @@ members = ["crates/*"]
 [workspace.dependencies]
 # local crates
 anc-trace = { path = "./crates/anc-trace" }
-ancestors-infra-json = { version = "0.1.0", path = "./crates/ancestors-infra-json" }
-ancestors-kernel = { version = "0.1.0", path = "./crates/ancestors-kernel" }
+ancestors-infra-json = { path = "./crates/ancestors-infra-json", version = "0.1.0" }
+ancestors-kernel = { path = "./crates/ancestors-kernel", version = "0.1.0" }
 gen-repo-sqlite = { path = "./crates/gen-repo-sqlite" }
 gen-scraper = { path = "./crates/gen-scraper" }
 gen-services = { path = "./crates/gen-services" }
@@ -16,22 +16,23 @@ id-ulid = { path = "./crates/id-ulid" }
 # non-local crates
 chrono = { version = "0.4.34", features = ["serde"] }
 config = { version = "0.14", default-features = false, features = [
-    "json",
-    "json5_rs",
-    "json5",
+  "json",
+  "json5",
+  "json5_rs",
 ] }
 crossterm = "0.27"
 diesel = { version = "2.2.4" }
-diesel_migrations = { version = "2.3.0"}
+diesel_migrations = { version = "2.3.0" }
 env_logger = "0.11"
 eyre = "0.6"
 gedcomx_date = { git = "https://github.com/kod-kristoff/gedcomx-date-rs", branch = "main" }
+gpui = "0.2.2"
 hashbrown = "0.16"
 json5 = "0.4.1"
 log = "0.4.17"
 miette = "7.1.0"
-prodash = "28.0.0"
 oxiri = { version = "0.2.2", features = ["serde"] }
+prodash = "28.0.0"
 r2d2 = "0.8.10"
 ratatui = "0.26"
 scraper = "0.18.1"
@@ -45,9 +46,9 @@ ulid = "1.0.0"
 ureq = { version = "2.9.6", features = ["json"] }
 xflags = "0.3.2"
 
+[workspace.lints.clippy]
+match_single_binding = "allow"
+
 [workspace.lints.rust]
 dead_code = "allow"
 unused_variables = "allow"
-
-[workspace.lints.clippy]
-match_single_binding = "allow"
