@@ -1,7 +1,9 @@
 [package]
 name = "gen-repo-sqlite"
-version = "0.1.0"
-edition = "2021"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [lib]
 doctest = false
@@ -9,10 +11,10 @@ doctest = false
 [dependencies]
 chrono.workspace = true
 diesel = { workspace = true, features = [
-    "chrono",
-    "r2d2",
-    "sqlite",
-    "returning_clauses_for_sqlite_3_35",
+  "chrono",
+  "r2d2",
+  "returning_clauses_for_sqlite_3_35",
+  "sqlite",
 ] }
 diesel_migrations = { workspace = true, features = ["sqlite"] }
 eyre.workspace = true
