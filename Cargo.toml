@@ -1,6 +1,23 @@
 [workspace]
-resolver = "2"
-members = ["crates/*"]
+resolver = "3"
+members = [
+  "crates/anc-trace/",
+  "crates/ancestors-cli/",
+  "crates/ancestors-infra-json/",
+  "crates/ancestors-kernel/",
+  "crates/ancestors-tui/",
+  "crates/ancestors/",
+  "crates/gen-repo-sqlite/",
+  "crates/gen-scraper/",
+  "crates/gen-services/",
+  "crates/gen-test-suite/",
+  "crates/gen-types/"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.86"
 
 [workspace.dependencies]
 # local crates

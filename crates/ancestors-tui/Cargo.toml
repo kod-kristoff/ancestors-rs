@@ -1,18 +1,20 @@
 [package]
 name = "ancestors-tui"
-version = "0.1.0"
-authors = ["Kristoffer Andersson <kristoffer.andersson@gu.se>"]
-edition = "2021"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [lib]
 doctest = false
 
 [[bin]]
-name = "ancestors-tui"
 doctest = false
+name = "ancestors-tui"
 test = false
 
 [dependencies]
+ancestors-kernel.workspace = true
 config.workspace = true
 crossterm.workspace = true
 env_logger.workspace = true
@@ -22,9 +24,6 @@ log.workspace = true
 ratatui.workspace = true
 serde = { workspace = true, features = ["derive"] }
 tui-input.workspace = true
-
-# local deps
-ancestors-kernel.workspace = true
 
 [lints]
 workspace = true
