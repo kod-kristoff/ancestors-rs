@@ -54,6 +54,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "ancestors"
+version = "0.1.0"
+
+[[package]]
 name = "ancestors-cli"
 version = "0.1.0"
 dependencies = [
