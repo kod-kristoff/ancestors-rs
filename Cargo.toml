@@ -34,7 +34,7 @@ prodash = "28.0.0"
 oxiri = { version = "0.2.2", features = ["serde"] }
 r2d2 = "0.8.10"
 ratatui = "0.26"
-scraper = "0.18.1"
+scraper = "0.25.0"
 serde = { version = "^1.0.99" }
 serde_json = { version = "1" }
 serde_with = { version = "3.6.1" }
