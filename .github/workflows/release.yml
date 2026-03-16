@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain-action@b8d1a322a6009a2b7220f53996695778eef89b41 # v1.38.0
+        uses: taiki-e/setup-cross-toolchain-action@20dbac418ca692fd1a9377acf2cec38161169a39 # v1.39.1
         with:
           target: ${{ matrix.target }}
           runner: none # Skip installation of cross-testing related tools because we only do cross-compilation.
