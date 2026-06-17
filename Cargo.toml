@@ -1,7 +1,9 @@
 [workspace]
 resolver = "3"
 members = [
+  "crates/anc-menu",
   "crates/anc-trace/",
+  "crates/ancestors_actions",
   "crates/ancestors-cli/",
   "crates/ancestors-infra-json/",
   "crates/ancestors-kernel/",
@@ -22,7 +24,10 @@ rust-version = "1.86"
 [workspace.dependencies]
 # local crates
 anc-trace = { path = "./crates/anc-trace" }
-ancestors-infra-json = { path = "./crates/ancestors-infra-json", version = "0.1.0" }
+ancestors-infra-json = {
+  path = "./crates/ancestors-infra-json",
+  version = "0.1.0"
+}
 ancestors-kernel = { path = "./crates/ancestors-kernel", version = "0.1.0" }
 gen-repo-sqlite = { path = "./crates/gen-repo-sqlite" }
 gen-scraper = { path = "./crates/gen-scraper" }
@@ -32,18 +37,27 @@ id-ulid = { path = "./crates/id-ulid" }
 
 # non-local crates
 chrono = { version = "0.4.34", features = ["serde"] }
-config = { version = "0.14", default-features = false, features = [
-  "json",
-  "json5",
-  "json5_rs",
-] }
+config = {
+  version = "0.14",
+  default-features = false,
+  features = [
+    "json",
+    "json5",
+    "json5_rs",
+  ]
+}
 crossterm = "0.27"
 diesel = { version = "2.2.4" }
 diesel_migrations = { version = "2.3.0" }
 env_logger = "0.11"
 eyre = "0.6"
-gedcomx_date = { git = "https://github.com/kod-kristoff/gedcomx-date-rs", branch = "main" }
-gpui = "0.2.2"
+gedcomx_date = {
+  git = "https://github.com/kod-kristoff/gedcomx-date-rs",
+  branch = "main"
+}
+gpui = { git = "https://github.com/zed-industries/zed.git" }
+gpui_platform = { git = "https://github.com/zed-industries/zed.git" }
+# gpui = "0.2.2"
 hashbrown = "0.16"
 json5 = "0.4.1"
 log = "0.4.17"

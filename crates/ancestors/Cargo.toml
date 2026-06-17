@@ -5,7 +5,10 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+anc-menu = { path = "../anc-menu", version = "0.1.0" }
+ancestors_actions = { path = "../ancestors_actions", version = "0.1.0" }
 gpui.workspace = true
+gpui_platform = { workspace = true, features = ["wayland"] }
 
 [lints]
 workspace = true
