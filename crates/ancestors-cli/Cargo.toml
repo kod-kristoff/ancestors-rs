@@ -1,33 +1,31 @@
 [package]
 name = "ancestors-cli"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
+doctest = false
 name = "ancestors-cli"
 path = "src/bin/main.rs"
-doctest = false
 test = false
 
 [dependencies]
-# chrono.workspace = true
-prodash = { workspace = true, features = [
-    "render-line",
-    "render-line-crossterm",
-    "signal-hook",
-] }
-env_logger.workspace = true
-miette = { workspace = true, features = ["fancy", "derive"] }
-tracing.workspace = true
-xflags.workspace = true
-
-# local deps
-gen-scraper.workspace = true
 anc-trace.workspace = true
+env_logger.workspace = true
 gen-repo-sqlite = { workspace = true }
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-tracing-forest = "0.3.0"
+gen-scraper.workspace = true
 gen-services.workspace = true
+miette = { workspace = true, features = ["derive", "fancy"] }
+prodash = { workspace = true, features = [
+  "render-line",
+  "render-line-crossterm",
+  "signal-hook",
+] }
 serde_json.workspace = true
+tracing.workspace = true
+tracing-forest = "0.3.0"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+xflags.workspace = true
