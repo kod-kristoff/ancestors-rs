@@ -111,7 +111,7 @@ impl cosmic::Application for App {
                     eprintln!("failed to get current executable path: {}", err);
                 }
             },
-            Message::FamilyTreeOpen => todo!(),
+            Message::FamilyTreeOpen => return self.push_dialog(DialogPage::OpenFamilyTree {}),
             Message::WindowClose => {
                 return window::close(self.core.main_window_id().unwrap());
             }
