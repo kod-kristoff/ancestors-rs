@@ -72,6 +72,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "ancestors-gui"
+version = "0.1.0"
+
+[[package]]
 name = "ancestors-infra-json"
 version = "0.1.0"
 dependencies = [
