@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/*", "crates/ancestors-gui/"]
+members = ["crates/*", "crates/ancestors"]
 
 [workspace.dependencies]
 # local crates

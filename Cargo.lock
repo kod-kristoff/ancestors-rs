@@ -196,6 +196,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ancestors"
+version = "0.1.0"
+dependencies = [
+ "freya",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "ancestors-cli"
 version = "0.1.0"
 dependencies = [
@@ -211,15 +220,6 @@ dependencies = [
  "tracing-forest",
  "tracing-subscriber",
  "xflags",
-]
-
-[[package]]
-name = "ancestors-gui"
-version = "0.1.0"
-dependencies = [
- "freya",
- "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
