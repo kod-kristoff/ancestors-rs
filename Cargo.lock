@@ -1701,6 +1701,7 @@ dependencies = [
  "freya-edit",
  "freya-engine",
  "freya-performance-plugin",
+ "freya-radio",
  "freya-winit",
  "torin",
 ]
@@ -1828,6 +1829,15 @@ dependencies = [
  "freya-core",
  "freya-engine",
  "freya-winit",
+]
+
+[[package]]
+name = "freya-radio"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01755d31cd34f290a5a285e44977c4609f765ec6ad1c9915dd874142981401da"
+dependencies = [
+ "freya-core",
 ]
 
 [[package]]
